@@ -5,7 +5,7 @@
 
 - Student: Brecht Vandekerckhove
 - Studentennummer: 201102978
-- E-mailadres: <mailto:brecht.vandekerckhove@student.hogent.be>
+- E-mailadres: <mailto: brecht.vandekerckhove@student.hogent.be>
 
 ## Vereisten
 
