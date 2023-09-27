@@ -4,10 +4,10 @@
 > Lees <https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet> om te weten hoe een Markdown-bestand opgemaakt moet worden.
 > Verwijder alle instructies (lijnen die starten met >).
 
-- [ ] Front-end Web Development:
+- [x] Front-end Web Development:
   - https://github.com/Web-IV/2324-frontendweb-BrechtVandekerckhove.git
   - <LINK_ONLINE_VERSIE_HIER>
-- [ ] Web Services:
+- [x] Web Services:
   - https://github.com/Web-IV/2324-webservices-BrechtVandekerckhove.git
   - <LINK_ONLINE_VERSIE_HIER>
 
