@@ -29,8 +29,8 @@ Bij een warme maaltijd bestaat de keuze een hoofdschotel (3 vaste keuzes + 2 sug
 Bij een broodmaaltijd bestaat de keuze uit: bruine of witte sandwiches, 5 keuzes hartig beleg, 5 keuzes zoet beleg, al dan niet vetstof, al dan niet soep, zuivel- of fruitdessert.
 Een medewerker kan slechts 1 maaltijd per shift bestellen.
 
-**ERD**:
-![ERD](https://github.com/Web-IV/2324-webservices-BrechtVandekerckhove/ERD.png "ERD")
+**ERD**:  
+![ERD](./ERD/ERD.png "ERD")
 
 ## Screenshots
 
