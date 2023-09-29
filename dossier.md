@@ -22,6 +22,16 @@
 
 > Omschrijf hier duidelijk waarover jouw project gaat. Voeg een domeinmodel (of EERD) toe om jouw entiteiten te verduidelijken.
 
+**Naam applicatie**: MidnightMeals
+
+Ziekenhuismedewerkers die 's nachts werken hebben recht op een maaltijd. Via de applicatie MidnightMeals kunnen deze maaltijden besteld worden. Er is keuze tussen een warme maaltijd en een broodmaaltijd.
+Bij een warme maaltijd bestaat de keuze een hoofdschotel (3 vaste keuzes + 2 suggesties die maandelijks veranderen), soep of geen soep en zuiveldessert of fruitdessert.
+Bij een broodmaaltijd bestaat de keuze uit: bruine of witte sandwiches, 5 keuzes hartig beleg, 5 keuzes zoet beleg, al dan niet vetstof, al dan niet soep, zuivel- of fruitdessert.
+Een medewerker kan slechts 1 maaltijd per shift bestellen.
+
+**ERD**:
+![ERD](https://github.com/Web-IV/2324-webservices-BrechtVandekerckhove/ERD.png "ERD")
+
 ## Screenshots
 
 > Voeg enkele (nuttige!) screenshots toe die tonen wat de app doet.
@@ -51,13 +61,13 @@
   - [ ] definieert constanten (variabelen, functies en componenten) buiten de component
   - [ ] minstens één form met meerdere velden met validatie (naast login/register)
   - [ ] login systeem
-<br />
+        <br />
 
 - **routing**
 
   - [ ] heeft minstens 2 pagina's (naast login/register)
   - [ ] routes worden afgeschermd met authenticatie en autorisatie
-<br />
+        <br />
 
 - **state-management**
 
@@ -65,12 +75,12 @@
   - [ ] degelijke foutmeldingen indien API-call faalt
   - [ ] gebruikt useState enkel voor lokale state
   - [ ] gebruikt gepast state management voor globale state - indien van toepassing
-<br />
+        <br />
 
 - **hooks**
 
   - [ ] gebruikt de hooks op de juiste manier
-<br />
+        <br />
 
 - **varia**
 
@@ -88,19 +98,19 @@
   - [ ] één module beheert de connectie + connectie wordt gesloten bij sluiten server
   - [ ] heeft migraties - indien van toepassing
   - [ ] heeft seeds
-<br />
+        <br />
 
 - **repositorylaag**
 
   - [ ] definieert één repository per entiteit (niet voor tussentabellen) - indien van toepassing
   - [ ] mapt OO-rijke data naar relationele tabellen en vice versa - indien van toepassing
-<br />
+        <br />
 
 - **servicelaag met een zekere complexiteit**
 
   - [ ] bevat alle domeinlogica
   - [ ] bevat geen SQL-queries of databank-gerelateerde code
-<br />
+        <br />
 
 - **REST-laag**
 
@@ -110,7 +120,7 @@
   - [ ] bevat geen domeinlogica
   - [ ] geen API calls voor entiteiten die geen zin hebben zonder hun ouder (bvb tussentabellen)
   - [ ] degelijke authorisatie/authenticatie op alle routes
-<br />
+        <br />
 
 - **algemeen**
 

@@ -1,0 +1,20 @@
+{
+  "name": "MidnightMeals",
+  "version": "1.0.0",
+  "description": "Applicatie waar ziekenhuismedewerkers nachtmaaltijden mee kunnen bestellen.",
+  "main": "index.js",
+  "repository": "git@github.com:Web-IV/2324-webservices-BrechtVandekerckhove.git",
+  "author": "Brecht Vandekerckhove brecht.vandekerckhove@student.hogent.be",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "koa": "^2.14.2",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
