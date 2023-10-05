@@ -21,6 +21,10 @@ Ik verwacht dat volgende software reeds geïnstalleerd is:
 
 > Schrijf hier hoe we de applicatie starten (.env bestanden aanmaken, commando's om uit te voeren...)
 
+Maak een .env bestand aan in de root met onderstaande code
+
+`NODE_ENV=development`
+
 ## Testen
 
 > Schrijf hier hoe we de testen uitvoeren (.env bestanden aanmaken, commando's om uit te voeren...)
