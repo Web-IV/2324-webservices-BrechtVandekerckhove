@@ -1,4 +1,4 @@
-# Voornaam Familienaam (Studentennummer)
+# Brecht Vandekerckhove (201102978)
 
 - [x] Front-end Web Development:
   - https://github.com/Web-IV/2324-frontendweb-BrechtVandekerckhove.git
