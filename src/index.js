@@ -3,7 +3,7 @@ const winston = require("winston");
 const config = require("config");
 const bodyParser = require("koa-bodyparser");
 const Router = require("@koa/router");
-const transactionService = require("./service/bestellingen");
+const bestellingService = require("./service/bestellingen");
 
 const NODE_ENV = config.get("env");
 const LOG_LEVEL = config.get("log.level");
@@ -23,8 +23,13 @@ app.use(bodyParser());
 
 const router = new Router();
 
-router.get("/api/bestellingen", async (ctx) => {
-  ctx.body = transactionService.getAll();
+router.get("/api/bestellingen/all", async (ctx) => {
+  ctx.body = bestellingService.getAll();
+});
+
+router.post("/api/bestellingen", async (ctx) => {
+  const nieuweBestelling = bestellingService.create(ctx.request.body);
+  ctx.body = nieuweBestelling;
 });
 
 app.use(router.routes()).use(router.allowedMethods());

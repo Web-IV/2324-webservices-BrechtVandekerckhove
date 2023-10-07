@@ -24,28 +24,28 @@ Bij een broodmaaltijd bestaat de keuze uit: bruine of witte sandwiches, 5 keuzes
 Een medewerker kan slechts 1 maaltijd per shift bestellen, leverdatum van een maaltijd moet dus uniek zijn.
 
 **ERD versie 1**:  
-![ERD](./ERD/ERD.png "ERD")  
+![ERD](./ERD/ERD.png "ERD")
 
 **ERD versie 2:**  
 ![ERD versie 2](./ERD/ERDv2.png "ERD versie 2")  
-Uitleg aanpassingen tov versie: 
+Uitleg aanpassingen tov versie:
+
 - Entiteit bestelling zwak -> sterk: bestellingsnr is uniek over alle medewerkers heen.
-- Cardinaliteit Bestelling 0..1 -- 1..N Maaltijd: 
-  - Een bestellig bestaat uit minstens 1  maaltijd en kan meerdere bevatten
-  - Een maaltijd is toegewezen en geen of max 1 bestelling (uniek maaltijdId).
-- Entiteit SuggestieVanDeMaand toegevoegd: zo kunnen de suggesties van gans het jaar worden opgeslaan in de databank. Een WarmeMaaltijd bevat geen of één SuggestieVanDeMaand. SuggestieVanDeMaand behoort tot 0 of meerdere WarmeMaaltijd. 
+- Cardinaliteit Bestelling 0..1 -- 1..N Maaltijd:
+  - Een bestellig bestaat uit minstens 1 maaltijd en kan meerdere bevatten
+  - Een maaltijd is toegewezen aan geen of max 1 bestelling (uniek maaltijdId).
+- Entiteit SuggestieVanDeMaand toegevoegd: zo kunnen de suggesties van gans het jaar worden opgeslaan in de databank. Een WarmeMaaltijd bevat geen of één SuggestieVanDeMaand. SuggestieVanDeMaand behoort tot 0 of meerdere WarmeMaaltijd.
 
-
-**Mapping:**  
+**Mapping:**
 
 **Medewerker** (<u>id</u>, naam, voornaam, dienst)  
 **Bestelling** (<u>bestellingsnr</u>, besteldatum, medewerkersId)  
-IR: vreemde sleutel *medewerkersId* verwijst naar *id* uit *Medewerker*, is verplicht    
+IR: vreemde sleutel _medewerkersId_ verwijst naar _id_ uit _Medewerker_, is verplicht  
 **WarmeMaaltijd** (<u>id</u>, leverdatum, soep, dessert, hoofdschotel, suggestieVanDeMaandId, bestellingsnr)  
-IR: vreemde sleutel *suggestieVanDeMaandId* verwijst naar *id* uit *SuggestieVanDeMaand*, is optioneel  
-IR: vreemde sleutel *bestellingsnr* verwijst naar *bestellingsnr* uit *Bestelling*, is optioneel    
+IR: vreemde sleutel _suggestieVanDeMaandId_ verwijst naar _id_ uit _SuggestieVanDeMaand_, is optioneel  
+IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestelling_, is optioneel  
 **BroodMaaltijd** (<u>id</u>, leverdatum, soep, dessert, typeSandwiches, hartigBeleg, zoetBeleg, vetstof, bestellingsnr)  
-IR: vreemde sleutel *bestellingsnr* verwijst naar *bestellingsnr* uit *Bestelling*, is optioneel  
+IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestelling_, is optioneel  
 **SuggestieVanDeMaand** (<u>id</u>, maand, vegie, omschrijving)
 
 ## Screenshots
@@ -59,32 +59,33 @@ IR: vreemde sleutel *bestellingsnr* verwijst naar *bestellingsnr* uit *Bestellin
 > Dit is weinig zinvol indien je enkel Front-end Web Development volgt, verwijder dan deze sectie.
 > Indien je als extra Swagger koos, dan voeg je hier een link toe naar jouw online documentatie. Swagger geeft nl. exact (en nog veel meer) wat je hieronder moet schrijven.
 
-### Bestelling  
+### Bestelling
+
 - Een gebruiker moet al zijn bestellingen kunnen bekijken:  
-`GET /api/bestellingen`   (gebruikersId zit in de token)
+  `GET /api/bestellingen` (gebruikersId zit in de token)
 
 - Een gebruiker moet zijn bestelling in detail kunnen bekijken:  
-`GET /api/bestellingen/:bestellingsnr` (gebruikersId zit in de token)  
+  `GET /api/bestellingen/:bestellingsnr` (gebruikersId zit in de token)
 
 - Een gebruiker moet een winkelmandje kunnen bevestigen, bestelling dus plaatsen:  
-`POST /api/bestellingen`  (gebruikersId zit in de token) 
+  `POST /api/bestellingen` (gebruikersId zit in de token)
 
 - Een gebruiker moet een bestelling kunnen verwijderen:  
-`DELETE /api/bestellingen/:bestellingsnr` (gebruikersId zit in de token) 
+  `DELETE /api/bestellingen/:bestellingsnr` (gebruikersId zit in de token)
 
 - Een admin gebruiker moet alle bestellingen van de gebruikers kunnen bekijken:  
-`GET /api/bestellingen/all` 
+  `GET /api/bestellingen/all`
 
-### Maaltijd  
+### Maaltijd
+
 - Een gebruiker moet een maaltijd kunnen aanmaken:  
-`POST /api/maaltijd`  (gebruikersId zit in de token) 
+  `POST /api/maaltijd` (gebruikersId zit in de token)
 
 - Een gebruiker moet een maaltijd kunnen toevoegen aan winkelmandje:  
-`POST /api/winkelmandje` (gebruikersId zit in de token) 
+  `POST /api/winkelmandje` (gebruikersId zit in de token)
 
 - Een gebruiker moet een maaltijd kunnen verwijderen uit winkelmandje:  
-`DELETE /api/winkelmandje/:id` (gebruikersId zit in de token) 
-
+  `DELETE /api/winkelmandje/:id` (gebruikersId zit in de token)
 
 ## Behaalde minimumvereisten
 
