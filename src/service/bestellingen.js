@@ -12,6 +12,10 @@ const deleteById = (bestellingsnr) => {
   );
   if (index >= 0) {
     BESTELLINGEN.splice(index, 1);
+  } else {
+    getLogger().error(
+      "Er is geen bestelling met bestellingsnr ${bestellingsnr}"
+    );
   }
 };
 
