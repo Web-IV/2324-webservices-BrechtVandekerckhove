@@ -6,6 +6,15 @@ const getAll = () => {
 const getById = (bestellingsnr) => {
   return BESTELLINGEN.find((b) => b.bestellingsnr === bestellingsnr);
 };
+const deleteById = (bestellingsnr) => {
+  const index = BESTELLINGEN.findIndex(
+    (b) => b.bestellingsnr === bestellingsnr
+  );
+  if (index >= 0) {
+    BESTELLINGEN.splice(index, 1);
+  }
+};
+
 //werkt enkel voor 1 maaltijd per bestelling
 const create = (bestelling) => {
   const bestellingsnr = BESTELLINGEN.length + 1;
@@ -47,5 +56,6 @@ const create = (bestelling) => {
 module.exports = {
   getAll,
   getById,
+  deleteById,
   create,
 };
