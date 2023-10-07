@@ -3,7 +3,9 @@ let { BESTELLINGEN, MEDERWERKERS } = require("../data/mock_data");
 const getAll = () => {
   return { items: BESTELLINGEN, count: BESTELLINGEN.length };
 };
-
+const getById = (bestellingsnr) => {
+  return BESTELLINGEN.find((b) => b.bestellingsnr === bestellingsnr);
+};
 //werkt enkel voor 1 maaltijd per bestelling
 const create = (bestelling) => {
   const bestellingsnr = BESTELLINGEN.length + 1;
@@ -44,5 +46,6 @@ const create = (bestelling) => {
 
 module.exports = {
   getAll,
+  getById,
   create,
 };

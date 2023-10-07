@@ -26,6 +26,9 @@ const router = new Router();
 router.get("/api/bestellingen/all", async (ctx) => {
   ctx.body = bestellingService.getAll();
 });
+router.get("/api/bestellingen/:bestellingsnr", async (ctx) => {
+  ctx.body = bestellingService.getById(Number(ctx.params.bestellingsnr));
+});
 
 router.post("/api/bestellingen", async (ctx) => {
   const nieuweBestelling = bestellingService.create(ctx.request.body);
