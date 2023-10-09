@@ -28,13 +28,13 @@ Een medewerker kan slechts 1 maaltijd per shift bestellen, leverdatum van een ma
 
 **Mapping:**
 
-**Medewerker** (<u>id</u>, naam, voornaam, dienst)  
-**Bestelling** (<u>bestellingsnr</u>, besteldatum, medewerkersId)  
+**Medewerker** (<ins>id</ins>, naam, voornaam, dienst)  
+**Bestelling** (<ins>bestellingsnr</ins>, besteldatum, medewerkersId)  
 IR: vreemde sleutel _medewerkersId_ verwijst naar _id_ uit _Medewerker_, is verplicht  
-**Maaltijd** (<u>id</u>, type, leverdatum, hoofdschotel, soep, dessert, typeSandwiches, hartigBeleg, zoetBeleg, vetstof, suggestieVanDeMaandId, bestellingsnr)  
+**Maaltijd** (<ins>id</ins>, type, leverdatum, hoofdschotel, soep, dessert, typeSandwiches, hartigBeleg, zoetBeleg, vetstof, suggestieVanDeMaandId, bestellingsnr)  
 IR: vreemde sleutel _suggestieVanDeMaandId_ verwijst naar _id_ uit _SuggestieVanDeMaand_, is optioneel  
 IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestelling_, is optioneel   
-**SuggestieVanDeMaand** (<u>id</u>, maand, vegie, omschrijving)
+**SuggestieVanDeMaand** (<ins>id</ins>, maand, vegie, omschrijving)
 
 ## Screenshots
 
