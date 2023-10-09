@@ -23,29 +23,17 @@ Bij een warme maaltijd bestaat de keuze een hoofdschotel (3 vaste keuzes + 2 sug
 Bij een broodmaaltijd bestaat de keuze uit: bruine of witte sandwiches, 5 keuzes hartig beleg, 5 keuzes zoet beleg, al dan niet vetstof, al dan niet soep, zuivel- of fruitdessert.
 Een medewerker kan slechts 1 maaltijd per shift bestellen, leverdatum van een maaltijd moet dus uniek zijn.
 
-**ERD versie 1**:  
-![ERD](./ERD/ERD.png "ERD")
-
-**ERD versie 2:**  
-![ERD versie 2](./ERD/ERDv2.png "ERD versie 2")  
-Uitleg aanpassingen tov versie:
-
-- Entiteit bestelling zwak -> sterk: bestellingsnr is uniek over alle medewerkers heen.
-- Cardinaliteit Bestelling 0..1 -- 1..N Maaltijd:
-  - Een bestellig bestaat uit minstens 1 maaltijd en kan meerdere bevatten
-  - Een maaltijd is toegewezen aan geen of max 1 bestelling (uniek maaltijdId).
-- Entiteit SuggestieVanDeMaand toegevoegd: zo kunnen de suggesties van gans het jaar worden opgeslaan in de databank. Een WarmeMaaltijd bevat geen of één SuggestieVanDeMaand. SuggestieVanDeMaand behoort tot 0 of meerdere WarmeMaaltijd.
+**ERD:**  
+![ERD](./ERD/ERDv3.png "ERD")  
 
 **Mapping:**
 
 **Medewerker** (<u>id</u>, naam, voornaam, dienst)  
 **Bestelling** (<u>bestellingsnr</u>, besteldatum, medewerkersId)  
 IR: vreemde sleutel _medewerkersId_ verwijst naar _id_ uit _Medewerker_, is verplicht  
-**WarmeMaaltijd** (<u>id</u>, leverdatum, soep, dessert, hoofdschotel, suggestieVanDeMaandId, bestellingsnr)  
+**Maaltijd** (<u>id</u>, type, leverdatum, hoofdschotel, soep, dessert, typeSandwiches, hartigBeleg, zoetBeleg, vetstof, suggestieVanDeMaandId, bestellingsnr)  
 IR: vreemde sleutel _suggestieVanDeMaandId_ verwijst naar _id_ uit _SuggestieVanDeMaand_, is optioneel  
-IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestelling_, is optioneel  
-**BroodMaaltijd** (<u>id</u>, leverdatum, soep, dessert, typeSandwiches, hartigBeleg, zoetBeleg, vetstof, bestellingsnr)  
-IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestelling_, is optioneel  
+IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestelling_, is optioneel   
 **SuggestieVanDeMaand** (<u>id</u>, maand, vegie, omschrijving)
 
 ## Screenshots
