@@ -28,7 +28,7 @@ module.exports = (app) => {
     prefix: "/bestellingen",
   });
 
-  router.get("/all", getAllBestellingen);
+  router.get("/", getAllBestellingen);
   router.post("/", nieuweBestelling);
   router.get("/:bestellingsnr", getBestellingByBestellingsnr);
   router.delete("/:bestellingsnr", deleteBestelling);

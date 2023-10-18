@@ -62,7 +62,7 @@ IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestellin
   `DELETE /api/bestellingen/:bestellingsnr` (gebruikersId zit in de token)
 
 - Een admin gebruiker moet alle bestellingen van de gebruikers kunnen bekijken:  
-  `GET /api/bestellingen/all`
+  `GET /api/bestellingen/`
 
 ### Maaltijd
 

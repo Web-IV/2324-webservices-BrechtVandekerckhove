@@ -19,39 +19,46 @@ const deleteById = (bestellingsnr) => {
   }
 };
 
-//werkt enkel voor 1 maaltijd per bestelling
 const create = (bestelling) => {
-  const bestellingsnr = BESTELLINGEN.length + 1;
-  const besteldatum = new Date();
-
   const nieuweBestelling = {
-    bestellingsnr,
-    besteldatum,
-    medewerker: {
-      id: bestelling.medewerker.id,
-      naam: bestelling.medewerker.naam,
-      voornaam: bestelling.medewerker.voornaam,
-      dienst: bestelling.medewerker.dienst,
-    },
-    maaltijden: [
-      {
-        id: bestelling.maaltijden.id,
-        leverdatum: bestelling.maaltijden.leverdatum,
-        hoofdschotel: bestelling.maaltijden.hoofdschotel,
-        soep: bestelling.maaltijden.soep,
-        dessert: bestelling.maaltijden.dessert,
-      },
-    ],
+    bestellingsnr: BESTELLINGEN.length + 1,
+    besteldatum: new Date(),
+    medewerker: { ...bestelling.medewerker },
+    maaltijden: [],
   };
 
-  if (nieuweBestelling.maaltijden.hoofdschotel === "suggestie") {
-    nieuweBestelling.maaltijden.suggestieVanDeMaand = {
-      id: bestelling.maaltijden.suggestieVanDeMaand.id,
-      maand: bestelling.maaltijden.suggestieVanDeMaand.maand,
-      vegie: bestelling.maaltijden.suggestieVanDeMaand.vegie,
-      omschrijving: bestelling.maaltijden.suggestieVanDeMaand.omschrijving,
+  bestelling.maaltijden.forEach((maaltijd) => {
+    /*const nieuweMaaltijd = {
+      id: maaltijd.id,
+      type: maaltijd.type,
+      leverdatum: maaltijd.leverdatum,
+      soep: maaltijd.soep === "soep",
+      dessert: maaltijd.dessert,
     };
-  }
+    if (maaltijd.type === "broodMaaltijd") {
+      nieuweMaaltijd.typeSandwiches = maaltijd.typeSandwiches;
+      nieuweMaaltijd.hartigBeleg = maaltijd.hartigBeleg;
+      nieuweMaaltijd.zoetBeleg = maaltijd.zoetBeleg;
+      nieuweMaaltijd.vetstof = maaltijd.vetstof === "vetstof";
+    }
+    if (maaltijd.type === "warmeMaaltijd") {
+      nieuweMaaltijd.hoofdschotel = maaltijd.hoofdschotel;
+      if (nieuweBestelling.maaltijden.hoofdschotel === "suggestie") {
+        nieuweBestelling.maaltijden.suggestieVanDeMaand = {
+          id: bestelling.maaltijden.suggestieVanDeMaand.id,
+          maand: bestelling.maaltijden.suggestieVanDeMaand.maand,
+          vegie: bestelling.maaltijden.suggestieVanDeMaand.vegie,
+          omschrijving: bestelling.maaltijden.suggestieVanDeMaand.omschrijving,
+        };
+      }
+    }*/
+    const nieuweMaaltijd = { ...maaltijd };
+    nieuweMaaltijd.soep = maaltijd.soep === "soep";
+    if (nieuweMaaltijd.vetstof) {
+      nieuweMaaltijd.vetstof = maaltijd.vetstof === "vetstof";
+    }
+    nieuweBestelling.maaltijden.push(nieuweMaaltijd);
+  });
 
   BESTELLINGEN.push(nieuweBestelling);
   return nieuweBestelling;

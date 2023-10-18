@@ -42,8 +42,6 @@ app.use(
 app.use(bodyParser());
 
 app.use(async (ctx, next) => {
-  logger.info(JSON.stringify(ctx.request));
-  logger.info(JSON.stringify(ctx.request.body));
   ctx.body = "Hello World";
   return next();
 });
