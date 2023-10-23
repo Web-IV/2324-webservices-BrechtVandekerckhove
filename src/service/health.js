@@ -1,4 +1,5 @@
 const packageJson = require('../../package.json');
+const config = require("config");
 
 /**
  * Check if the server is healthy. Can be extended
@@ -10,7 +11,7 @@ const ping = () => ({ pong: true });
  * Get the running server's information.
  */
 const getVersion = () => ({
-  env: process.env.NODE_ENV,
+  env: config.env,
   version: packageJson.version,
   name: packageJson.name,
 });

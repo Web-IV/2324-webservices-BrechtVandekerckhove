@@ -1,5 +1,4 @@
 const Koa = require("koa");
-const winston = require("winston");
 const config = require("config");
 const bodyParser = require("koa-bodyparser");
 const installRest = require("./rest");

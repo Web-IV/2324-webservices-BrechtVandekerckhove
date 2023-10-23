@@ -21,12 +21,12 @@ const deleteById = (bestellingsnr) => {
 
 const create = (bestelling) => {
   const nieuweBestelling = {
+    //bestellingsnr in databank laten genereren??
     bestellingsnr: BESTELLINGEN.length + 1,
     besteldatum: new Date(),
     medewerker: { ...bestelling.medewerker },
     maaltijden: [],
   };
-
   bestelling.maaltijden.forEach((maaltijd) => {
     /*const nieuweMaaltijd = {
       id: maaltijd.id,
@@ -52,7 +52,8 @@ const create = (bestelling) => {
         };
       }
     }*/
-    const nieuweMaaltijd = { ...maaltijd };
+   const nieuweMaaltijd = { ...maaltijd };
+   //strings omvormen naar booleans:
     nieuweMaaltijd.soep = maaltijd.soep === "soep";
     if (nieuweMaaltijd.vetstof) {
       nieuweMaaltijd.vetstof = maaltijd.vetstof === "vetstof";
