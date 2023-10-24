@@ -11,13 +11,20 @@ const nieuweBestelling = async (ctx) => {
 };
 
 const getBestellingByBestellingsnr = async (ctx) => {
-  ctx.body = bestellingService.getById(Number(ctx.params.bestellingsnr));
+  ctx.body = bestellingService.getByBestellingsnr(
+    Number(ctx.params.bestellingsnr)
+  );
 };
 
 const deleteBestelling = async (ctx) => {
-  bestellingService.deleteById(Number(ctx.params.bestellingsnr));
+  bestellingService.deleteByBestellingsnr(Number(ctx.params.bestellingsnr));
   ctx.status = 204; //succesvol verwerkt, geen content teruggegeven
 };
+
+const getLeverdataBestellingen = async (ctx) => {
+  ctx.body = bestellingService.getLeverdata();
+};
+
 /**
  * Install transaction routes in the given router.
  *
@@ -30,6 +37,7 @@ module.exports = (app) => {
 
   router.get("/", getAllBestellingen);
   router.post("/", nieuweBestelling);
+  router.get("/leverdata", getLeverdataBestellingen);
   router.get("/:bestellingsnr", getBestellingByBestellingsnr);
   router.delete("/:bestellingsnr", deleteBestelling);
 

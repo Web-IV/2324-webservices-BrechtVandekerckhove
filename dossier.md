@@ -55,6 +55,9 @@ IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestellin
 - Een gebruiker moet zijn bestelling in detail kunnen bekijken:  
   `GET /api/bestellingen/:bestellingsnr` (gebruikersId zit in de token)
 
+- Alle leverdata van alle bestellingen moeten opgevraagd kunnen worden zodat een nieuwe maaltijd niet op eenzelfde leverdatum geplaatst wordt:
+`GET /api/bestellingen/leverdata`
+
 - Een gebruiker moet een winkelmandje kunnen bevestigen, bestelling dus plaatsen:  
   `POST /api/bestellingen` (gebruikersId zit in de token)
 
@@ -64,7 +67,8 @@ IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestellin
 - Een admin gebruiker moet alle bestellingen van de gebruikers kunnen bekijken:  
   `GET /api/bestellingen/`
 
-### Maaltijd
+
+### Maaltijd (momenteel via localstorage, later schrappen?)
 
 - Een gebruiker moet een maaltijd kunnen aanmaken:  
   `POST /api/maaltijd` (gebruikersId zit in de token)

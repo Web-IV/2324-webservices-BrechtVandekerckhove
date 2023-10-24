@@ -27,7 +27,7 @@ let BESTELLINGEN = [
       {
         id: 5,
         type: "warmeMaaltijd",
-        leverdatum: "2023-10-07T00:00:00.000Z",
+        leverdatum: "2023-11-07T00:00:00.000Z",
         hoofdschotel: "lasagne",
         soep: true,
         dessert: "zuivel",
@@ -40,7 +40,7 @@ let BESTELLINGEN = [
       {
         id: 6,
         type: "broodMaaltijd",
-        leverdatum: "2023-10-08T00:00:00.000Z",
+        leverdatum: "2023-11-08T00:00:00.000Z",
         hoofdschotel: null,
         typeSandwiches: "bruin",
         hartigBeleg: "hesp",
@@ -54,7 +54,7 @@ let BESTELLINGEN = [
   },
   {
     bestellingsnr: 77,
-    besteldatum: "2023-10-03T00:00:00.000Z",
+    besteldatum: "2023-12-03T00:00:00.000Z",
     medewerker: {
       id: 2,
       naam: "Balcaen",
@@ -65,7 +65,7 @@ let BESTELLINGEN = [
       {
         id: 8,
         type: "warmeMaaltijd",
-        leverdatum: "2023-10-07T00:00:00.000Z",
+        leverdatum: "2023-12-07T00:00:00.000Z",
         hoofdschotel: "suggestie",
         soep: true,
         dessert: "fruit",
@@ -83,7 +83,7 @@ let BESTELLINGEN = [
       {
         id: 10,
         type: "broodMaaltijd",
-        leverdatum: "2023-10-09T00:00:00.000Z",
+        leverdatum: "2023-11-09T00:00:00.000Z",
         hoofdschotel: null,
         typeSandwiches: "wit",
         hartigBeleg: "kaas",
