@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Medewerker {
+  id      Int      @id @default(autoincrement())
+  naam    String
+  voornaam String
+  dienst  String
+  bestellingen Bestelling[]
+}
+
+model Bestelling {
+  bestellingsnr  Int      @id @default(autoincrement())
+  besteldatum    DateTime
+  medewerker      Medewerker @relation(fields: [medewerkerId], references: [id])
+  medewerkerId   Int
+  maaltijden      Maaltijd[]
+}
+
+model SuggestieVanDeMaand {
+  id           Int      @id @default(autoincrement())
+  maand        Int
+  vegie        Boolean
+  omschrijving String
+  maaltijden   Maaltijd[]
+}
+
+model Maaltijd {
+  id                  Int        @id @default(autoincrement())
+  type                String
+  leverdatum          DateTime
+  hoofdschotel        String?
+  soep                Boolean
+  dessert             String
+  typeSandwiches      String?
+  hartigBeleg         String?
+  zoetBeleg           String?
+  vetstof             Boolean
+  bestelling           Bestelling? @relation(fields: [bestellingsnr], references: [bestellingsnr])
+  bestellingsnr       Int?
+  suggestieVanDeMaand SuggestieVanDeMaand? @relation(fields: [suggestieVanDeMaandId], references: [id])
+  suggestieVanDeMaandId Int?
+}

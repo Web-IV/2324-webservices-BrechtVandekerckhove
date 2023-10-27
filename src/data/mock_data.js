@@ -40,7 +40,7 @@ let BESTELLINGEN = [
       {
         id: 6,
         type: "broodMaaltijd",
-        leverdatum: "2023-11-08T00:00:00.000Z",
+        leverdatum: "2023-11-07T00:00:00.000Z",
         hoofdschotel: null,
         typeSandwiches: "bruin",
         hartigBeleg: "hesp",
