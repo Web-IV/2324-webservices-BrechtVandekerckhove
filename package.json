@@ -1,5 +1,5 @@
 {
-  "name": "MidnightMeals",
+  "name": "midnightmeals",
   "version": "1.0.0",
   "description": "Applicatie waar ziekenhuismedewerkers nachtmaaltijden mee kunnen bestellen.",
   "main": "src/index.js",

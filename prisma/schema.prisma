@@ -44,7 +44,7 @@ model Maaltijd {
   typeSandwiches      String?
   hartigBeleg         String?
   zoetBeleg           String?
-  vetstof             Boolean
+  vetstof             Boolean?
   bestelling           Bestelling? @relation(fields: [bestellingsnr], references: [bestellingsnr])
   bestellingsnr       Int?
   suggestieVanDeMaand SuggestieVanDeMaand? @relation(fields: [suggestieVanDeMaandId], references: [id])

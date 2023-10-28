@@ -38,7 +38,7 @@ CREATE TABLE `Maaltijd` (
     `typeSandwiches` VARCHAR(191) NULL,
     `hartigBeleg` VARCHAR(191) NULL,
     `zoetBeleg` VARCHAR(191) NULL,
-    `vetstof` BOOLEAN NOT NULL,
+    `vetstof` BOOLEAN NULL,
     `bestellingsnr` INTEGER NULL,
     `suggestieVanDeMaandId` INTEGER NULL,
 

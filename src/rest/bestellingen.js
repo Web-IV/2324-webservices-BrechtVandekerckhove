@@ -2,7 +2,7 @@ const Router = require("@koa/router");
 const bestellingService = require("../service/bestellingen");
 
 const getAllBestellingen = async (ctx) => {
-  ctx.body = bestellingService.getAll();
+  ctx.body = await bestellingService.getAll();
 };
 
 const nieuweBestelling = async (ctx) => {

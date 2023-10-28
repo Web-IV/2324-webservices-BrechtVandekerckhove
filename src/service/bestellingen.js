@@ -1,9 +1,11 @@
 const { getLogger } = require("../core/logging");
 let { BESTELLINGEN, MEDERWERKERS } = require("../data/mock_data");
+const bestellingenRepository = require("../repository/bestellingen");
 
-const getAll = () => {
-  return { items: BESTELLINGEN, count: BESTELLINGEN.length };
+const getAll = async () => {
+  return await bestellingenRepository.findAll();
 };
+
 const getByBestellingsnr = (bestellingsnr) => {
   const bestelling = BESTELLINGEN.find(
     (b) => b.bestellingsnr === bestellingsnr
