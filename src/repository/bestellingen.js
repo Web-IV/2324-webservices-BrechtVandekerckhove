@@ -7,22 +7,88 @@ const findAll = async () => {
       maaltijden: true,
     },
   });
- //booleans omvormen naar ja/nee strings:
+  //booleans omvormen naar strings:
   const transformedBestellingen = bestellingen.map((bestelling) => {
     const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
       return {
         ...maaltijd,
-        soep: maaltijd.soep === null ? null : maaltijd.soep ? "ja" : "nee",
-        vetstof: maaltijd.vetstof === null ? null : maaltijd.vetstof ? "ja" : "nee",
+        soep:
+          maaltijd.soep === null
+            ? null
+            : maaltijd.soep
+            ? "dagsoep"
+            : "geen soep",
+        vetstof:
+          maaltijd.vetstof === null
+            ? null
+            : maaltijd.vetstof
+            ? "vetstof"
+            : "geen vetstof",
       };
     });
 
     return { ...bestelling, maaltijden: transformedMaaltijden };
   });
 
-  return { bestellingen:transformedBestellingen, count: bestellingen.length };
+  return { items: transformedBestellingen, count: bestellingen.length };
+};
+
+const findByBestellingsnr = async (bestellingsnr) => {
+  const bestelling = await prisma.bestelling.findUnique({
+    where: { bestellingsnr: bestellingsnr },
+    include: {
+      medewerker: true,
+      maaltijden: true,
+    },
+  });
+  return bestelling;
+};
+
+const deleteByBestellingsnr = async (bestellingsnr) => {
+ //bijhorende maaltijden worden ook vewijdered door cascade in schema.prisma
+  const deleted = await prisma.bestelling.delete({
+    where: { bestellingsnr: bestellingsnr },
+  });
+  return deleted;
+};
+
+const create = async (bestelling) => {
+  const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
+    return {
+      ...maaltijd,
+      soep:
+        maaltijd.soep === undefined
+          ? null
+          : maaltijd.soep === "dagsoep"
+          ? true
+          : false,
+      vetstof:
+        maaltijd.vetstof === undefined
+          ? null
+          : maaltijd.vetstof === "vetstof"
+          ? true
+          : false,
+    };
+  });
+
+  const createdBestelling = await prisma.bestelling.create({
+    data: {
+      besteldatum: new Date(), // besteldatum hier laten genereren
+      medewerkerId: bestelling.medewerkerId,
+      maaltijden: {
+        create: transformedMaaltijden, // maaltijden creeeren (id wordt hier automatisch gegenereerd )
+      },
+    },
+    include: {
+      maaltijden: true, // Hiermee worden de toegevoegde maaltijden opgenomen in het resultaat
+    },
+  });
+  return createdBestelling;
 };
 
 module.exports = {
   findAll,
+  findByBestellingsnr,
+  deleteByBestellingsnr,
+  create,
 };

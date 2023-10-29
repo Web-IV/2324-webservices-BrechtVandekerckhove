@@ -1,5 +1,6 @@
 const Router = require("@koa/router");
 const installBestellingenRouter = require("./bestellingen");
+const installSuggestiesRouter = require("./suggesties");
 const installHealthRoutes = require("./health");
 
 /**
@@ -13,7 +14,9 @@ module.exports = (app) => {
   });
 
   installBestellingenRouter(router);
+  installSuggestiesRouter(router);
   installHealthRoutes(router);
+
 
   app.use(router.routes()).use(router.allowedMethods());
 };

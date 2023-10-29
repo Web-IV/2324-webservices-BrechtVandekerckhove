@@ -67,6 +67,12 @@ IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestellin
 - Een admin gebruiker moet alle bestellingen van de gebruikers kunnen bekijken:  
   `GET /api/bestellingen/`
 
+### SuggestieVanDeMaand
+- De suggesties moeten opgevraagd kunnen worden:  
+`GET /api/suggesties` 
+
+- De (vegetarische) suggestie van bepaalde maand kan worden opgevraagd:  
+`GET /api/suggesties?maand=${maand}&vegie={vegie}`
 
 ### Maaltijd (momenteel via localstorage, later schrappen?)
 

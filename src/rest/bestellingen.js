@@ -6,27 +6,29 @@ const getAllBestellingen = async (ctx) => {
 };
 
 const nieuweBestelling = async (ctx) => {
-  const nieuweBestelling = bestellingService.create(ctx.request.body);
+  const nieuweBestelling = await bestellingService.create(ctx.request.body);
   ctx.body = nieuweBestelling;
 };
 
 const getBestellingByBestellingsnr = async (ctx) => {
-  ctx.body = bestellingService.getByBestellingsnr(
+  ctx.body = await bestellingService.getByBestellingsnr(
     Number(ctx.params.bestellingsnr)
   );
 };
 
 const deleteBestelling = async (ctx) => {
-  bestellingService.deleteByBestellingsnr(Number(ctx.params.bestellingsnr));
-  ctx.status = 204; //succesvol verwerkt, geen content teruggegeven
+ await bestellingService.deleteByBestellingsnr(
+    Number(ctx.params.bestellingsnr)
+  );
+  ctx.status = 204;//succesvol verwerkt, geen content teruggegeven
 };
 
 const getLeverdataBestellingen = async (ctx) => {
-  ctx.body = bestellingService.getLeverdata();
+  ctx.body = await bestellingService.getLeverdata();
 };
 
 /**
- * Install transaction routes in the given router.
+ * Install  routes in the given router.
  *
  * @param {Router} app - The parent router.
  */
