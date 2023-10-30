@@ -1,0 +1,7 @@
+nieuw schema migreren:
+yarn prisma migrate dev
+
+database seeden: 
+prisma db seed 
+prisma migrate reset (eerst wissen, dan seeden)
+
