@@ -4,10 +4,10 @@ const findAll = async () => {
   const bestellingen = await prisma.bestelling.findMany({
     include: {
       medewerker: true,
-      maaltijden: true,
+      maaltijden: { include: { suggestieVanDeMaand: true } },
     },
   });
-  //booleans omvormen naar strings:
+  //booleans omvormen naar strings en suggestieVanDeMaandOmschrijving toevoegen
   const transformedBestellingen = bestellingen.map((bestelling) => {
     const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
       return {
@@ -24,6 +24,9 @@ const findAll = async () => {
             : maaltijd.vetstof
             ? "vetstof"
             : "geen vetstof",
+        suggestieVanDeMaandOmschrijving: maaltijd.suggestieVanDeMaand
+          ? maaltijd.suggestieVanDeMaand.omschrijving
+          : null,
       };
     });
 
@@ -45,7 +48,7 @@ const findByBestellingsnr = async (bestellingsnr) => {
 };
 
 const deleteByBestellingsnr = async (bestellingsnr) => {
- //bijhorende maaltijden worden ook vewijdered door cascade in schema.prisma
+  //bijhorende maaltijden worden ook vewijdered door cascade in schema.prisma
   const deleted = await prisma.bestelling.delete({
     where: { bestellingsnr: bestellingsnr },
   });
@@ -54,8 +57,10 @@ const deleteByBestellingsnr = async (bestellingsnr) => {
 
 const create = async (bestelling) => {
   const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
+    //suggestieVanDeMaanOmschrijving niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
+    const { suggestieVanDeMaandOmschrijving, ...rest } = maaltijd;
     return {
-      ...maaltijd,
+      ...rest,
       soep:
         maaltijd.soep === undefined
           ? null
