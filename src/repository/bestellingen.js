@@ -7,29 +7,11 @@ const findAll = async () => {
       maaltijden: { include: { suggestieVanDeMaand: true } },
     },
   });
-  //booleans omvormen naar strings en suggestieVanDeMaandOmschrijving toevoegen
+
   const transformedBestellingen = bestellingen.map((bestelling) => {
     const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
-      return {
-        ...maaltijd,
-        soep:
-          maaltijd.soep === null
-            ? null
-            : maaltijd.soep
-            ? "dagsoep"
-            : "geen soep",
-        vetstof:
-          maaltijd.vetstof === null
-            ? null
-            : maaltijd.vetstof
-            ? "vetstof"
-            : "geen vetstof",
-        suggestieVanDeMaandOmschrijving: maaltijd.suggestieVanDeMaand
-          ? maaltijd.suggestieVanDeMaand.omschrijving
-          : null,
-      };
+      return transformedMaaltijd(maaltijd);
     });
-
     return { ...bestelling, maaltijden: transformedMaaltijden };
   });
 
@@ -41,10 +23,36 @@ const findByBestellingsnr = async (bestellingsnr) => {
     where: { bestellingsnr: bestellingsnr },
     include: {
       medewerker: true,
-      maaltijden: true,
+      maaltijden: {
+        include: { suggestieVanDeMaand: true },
+      },
     },
   });
-  return bestelling;
+  const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
+    return transformedMaaltijd(maaltijd);
+  });
+  return { ...bestelling, maaltijden: transformedMaaltijden };
+};
+
+  //booleans omvormen naar strings en suggestieVanDeMaandOmschrijving toevoegen
+const transformedMaaltijd = (maaltijd) => {
+  const { suggestieVanDeMaand, ...rest } = maaltijd;
+  const transformedMaaltijd = {
+    ...rest,
+    soep:
+      maaltijd.soep === null ? null : maaltijd.soep ? "dagsoep" : "geen soep",
+    vetstof:
+      maaltijd.vetstof === null
+        ? null
+        : maaltijd.vetstof
+        ? "vetstof"
+        : "geen vetstof",
+  };
+  if (suggestieVanDeMaand) {
+    transformedMaaltijd.suggestieVanDeMaandOmschrijving =
+      suggestieVanDeMaand.omschrijving;
+  }
+  return transformedMaaltijd;
 };
 
 const deleteByBestellingsnr = async (bestellingsnr) => {
