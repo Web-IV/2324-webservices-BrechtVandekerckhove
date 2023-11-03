@@ -3,16 +3,20 @@ const prisma = require("../data/prisma");
 const findAll = async () => {
   const bestellingen = await prisma.bestelling.findMany({
     include: {
-      medewerker: true,
-      maaltijden: { include: { suggestieVanDeMaand: true } },
+      medewerker: { include: { dienst: true } },
+      maaltijden: { include: { suggestieVanDeMaand: true, leverplaats: true } },
     },
   });
-
   const transformedBestellingen = bestellingen.map((bestelling) => {
+    const transformedMedewerker = medewerkerOmvormen(bestelling.medewerker);
     const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
       return transformedMaaltijd(maaltijd);
     });
-    return { ...bestelling, maaltijden: transformedMaaltijden };
+    return {
+      ...bestelling,
+      medewerker: transformedMedewerker,
+      maaltijden: transformedMaaltijden,
+    };
   });
 
   return { items: transformedBestellingen, count: bestellingen.length };
@@ -22,7 +26,7 @@ const findByBestellingsnr = async (bestellingsnr) => {
   const bestelling = await prisma.bestelling.findUnique({
     where: { bestellingsnr: bestellingsnr },
     include: {
-      medewerker: true,
+      medewerker: { include: { dienst: true } },
       maaltijden: {
         include: { suggestieVanDeMaand: true },
       },
@@ -34,9 +38,19 @@ const findByBestellingsnr = async (bestellingsnr) => {
   return { ...bestelling, maaltijden: transformedMaaltijden };
 };
 
-  //booleans omvormen naar strings en suggestieVanDeMaandOmschrijving toevoegen
+//dienstnaam uit dienst halen
+const medewerkerOmvormen = (medewerker) => {
+  const { dienst, ...rest } = medewerker;
+  const transformedMedewerker = {
+    ...rest,
+  };
+  transformedMedewerker.dienst = medewerker.dienst.naam;
+  return transformedMedewerker;
+};
+
+//booleans omvormen naar strings en suggestieVanDeMaandOmschrijving toevoegen
 const transformedMaaltijd = (maaltijd) => {
-  const { suggestieVanDeMaand, ...rest } = maaltijd;
+  const { suggestieVanDeMaand, leverplaats, ...rest } = maaltijd;
   const transformedMaaltijd = {
     ...rest,
     soep:
@@ -52,6 +66,7 @@ const transformedMaaltijd = (maaltijd) => {
     transformedMaaltijd.suggestieVanDeMaandOmschrijving =
       suggestieVanDeMaand.omschrijving;
   }
+  transformedMaaltijd.leverplaats = leverplaats.naam;
   return transformedMaaltijd;
 };
 
@@ -64,25 +79,34 @@ const deleteByBestellingsnr = async (bestellingsnr) => {
 };
 
 const create = async (bestelling) => {
-  const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
-    //suggestieVanDeMaanOmschrijving niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
-    const { suggestieVanDeMaandOmschrijving, ...rest } = maaltijd;
-    return {
-      ...rest,
-      soep:
-        maaltijd.soep === undefined
-          ? null
-          : maaltijd.soep === "dagsoep"
-          ? true
-          : false,
-      vetstof:
-        maaltijd.vetstof === undefined
-          ? null
-          : maaltijd.vetstof === "vetstof"
-          ? true
-          : false,
-    };
-  });
+  const transformedMaaltijden = await Promise.all(
+    bestelling.maaltijden.map(async (maaltijd) => {
+      //suggestieVanDeMaanOmschrijving niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
+      //leverplaats omzetten naar leverplaatsId
+      const { suggestieVanDeMaandOmschrijving, leverplaats, ...rest } =
+        maaltijd;
+      const { id: leverplaatsId } = await prisma.dienst.findUnique({
+        where: { naam: leverplaats },
+      });
+
+      return {
+        ...rest,
+        leverplaatsId: leverplaatsId,
+        soep:
+          maaltijd.soep === undefined
+            ? null
+            : maaltijd.soep === "dagsoep"
+            ? true
+            : false,
+        vetstof:
+          maaltijd.vetstof === undefined
+            ? null
+            : maaltijd.vetstof === "vetstof"
+            ? true
+            : false,
+      };
+    })
+  );
 
   const createdBestelling = await prisma.bestelling.create({
     data: {

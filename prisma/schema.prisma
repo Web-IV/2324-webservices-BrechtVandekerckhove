@@ -14,8 +14,9 @@ model Medewerker {
   id           Int          @id @default(autoincrement())
   naam         String
   voornaam     String
-  dienst       String
   bestellingen Bestelling[]
+  dienst       Dienst       @relation(fields: [dienstId], references: [id])
+  dienstId     Int
 }
 
 model Bestelling {
@@ -47,8 +48,17 @@ model Maaltijd {
   hartigBeleg           String?
   zoetBeleg             String?
   vetstof               Boolean?
+  leverplaats           Dienst               @relation(fields: [leverplaatsId], references: [id])
+  leverplaatsId         Int
   bestelling            Bestelling?          @relation(fields: [bestellingsnr], references: [bestellingsnr], onDelete: Cascade)
   bestellingsnr         Int?
   suggestieVanDeMaand   SuggestieVanDeMaand? @relation(fields: [suggestieVanDeMaandId], references: [id])
   suggestieVanDeMaandId Int?
+}
+
+model Dienst {
+  id          Int          @id @default(autoincrement())
+  naam        String       @unique
+  medewerkers Medewerker[]
+  maaltijden  Maaltijd[]
 }

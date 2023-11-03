@@ -2,7 +2,6 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
-
   const suggestieVanDeMaandData = [
     {
       maand: 1,
@@ -78,6 +77,57 @@ async function main() {
     )
   );
 
+  const diensten = await prisma.dienst.createMany({
+    data: [
+      { naam: 'BWC' },
+      { naam: 'CHI02' },
+      { naam: 'CHI05' },
+      { naam: 'CHI06' },
+      { naam: 'CHI07' },
+      { naam: 'CHI08' },
+      { naam: 'CHI10' },
+      { naam: 'CHI11' },
+      { naam: 'CHI12' },
+      { naam: 'CSA' },
+      { naam: 'dialyse' },
+      { naam: 'elektriekers' },
+      { naam: 'GER01' },
+      { naam: 'GER02' },
+      { naam: 'HBW' },
+      { naam: 'INZ01' },
+      { naam: 'INZ02' },
+      { naam: 'INZ03' },
+      { naam: 'INZ04' },
+      { naam: 'INT01' },
+      { naam: 'INT02' },
+      { naam: 'INT03' },
+      { naam: 'INT04' },
+      { naam: 'INT05' },
+      { naam: 'INT07' },
+      { naam: 'INT08' },
+      { naam: 'INT09' },
+      { naam: 'INT10' },
+      { naam: 'INT11' },
+      { naam: 'INT12' },
+      { naam: 'labo 24u' },
+      { naam: 'MAT01' },
+      { naam: 'MAT03' },
+      { naam: 'neonatologie' },
+      { naam: 'patiëntenvervoer' },
+      { naam: 'PED03' },
+      { naam: 'PED06' },
+      { naam: 'portiers' },
+      { naam: 'PSY01' },
+      { naam: 'PSY03' },
+      { naam: 'PSY04' },
+      { naam: 'PSY05' },
+      { naam: 'REV01' },
+      { naam: 'REV02' },
+      { naam: 'SPD01' },
+      { naam: 'stokers' }
+    ]
+    
+  });
 
   const brecht = await prisma.medewerker.create({
     include: {
@@ -90,7 +140,11 @@ async function main() {
     data: {
       naam: "Vandekerckhove",
       voornaam: "Brecht",
-      dienst: "L24U",
+      dienst: {
+        connect: {
+          naam: "labo 24u",
+        },
+      },
       bestellingen: {
         create: [
           {
@@ -100,6 +154,7 @@ async function main() {
                 {
                   type: "warmeMaaltijd",
                   leverdatum: new Date("2023-11-10"),
+                  leverplaats: { connect: { naam: "labo 24u" } },
                   hoofdschotel: "lasagne",
                   soep: true,
                   dessert: "zuivel",
@@ -107,6 +162,7 @@ async function main() {
                 {
                   type: "warmeMaaltijd",
                   leverdatum: new Date("2023-11-11"),
+                  leverplaats: { connect: { naam: "INZ01" } },
                   hoofdschotel: "suggestie",
                   soep: false,
                   dessert: "fruit",
@@ -128,6 +184,7 @@ async function main() {
               create: {
                 type: "broodMaaltijd",
                 leverdatum: new Date("2023-11-12"),
+                leverplaats: { connect: { naam: "labo 24u" } },
                 typeSandwiches: "wit",
                 soep: true,
                 dessert: "zuivel",
@@ -153,7 +210,7 @@ async function main() {
     data: {
       naam: "Balcaen",
       voornaam: "Melissa",
-      dienst: "L24U",
+      dienst: { connect: { naam: "labo 24u" } },
       bestellingen: {
         create: [
           {
@@ -163,6 +220,7 @@ async function main() {
                 {
                   type: "warmeMaaltijd",
                   leverdatum: new Date("2023-11-10"),
+                  leverplaats: { connect: { naam: "labo 24u" } },
                   hoofdschotel: "vol-au-vent",
                   soep: false,
                   dessert: "zuivel",
@@ -170,6 +228,7 @@ async function main() {
                 {
                   type: "warmeMaaltijd",
                   leverdatum: new Date("2023-12-21"),
+                  leverplaats: { connect: { naam: "labo 24u" } },
                   hoofdschotel: "vegetarische suggestie",
                   soep: true,
                   dessert: "fruit",
@@ -192,6 +251,7 @@ async function main() {
                 {
                   type: "broodmaaltijd",
                   leverdatum: new Date("2023-12-20"),
+                  leverplaats: { connect: { naam: "labo 24u" } },
                   typeSandwiches: "bruin",
                   soep: true,
                   dessert: "fruit",

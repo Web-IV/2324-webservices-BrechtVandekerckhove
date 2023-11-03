@@ -24,17 +24,21 @@ Bij een broodmaaltijd bestaat de keuze uit: bruine of witte sandwiches, 5 keuzes
 Een medewerker kan slechts 1 maaltijd per shift bestellen, leverdatum van een maaltijd moet dus uniek zijn.
 
 **ERD:**  
-![ERD](./ERD/ERDv3.png "ERD")  
+![ERD](./ERD/ERDv4.png "ERD")  
 
 **Mapping:**
 
 **Medewerker** (<ins>id</ins>, naam, voornaam, dienst)  
+IR: vreemde sleutel _dienst_ verwijst naar _id_ uit _Dienst_, is verplicht   
 **Bestelling** (<ins>bestellingsnr</ins>, besteldatum, medewerkersId)  
 IR: vreemde sleutel _medewerkersId_ verwijst naar _id_ uit _Medewerker_, is verplicht  
-**Maaltijd** (<ins>id</ins>, type, leverdatum, hoofdschotel, soep, dessert, typeSandwiches, hartigBeleg, zoetBeleg, vetstof, suggestieVanDeMaandId, bestellingsnr)  
+**Maaltijd** (<ins>id</ins>, type, leverdatum, leverplaats, hoofdschotel, soep, dessert, typeSandwiches, hartigBeleg, zoetBeleg, vetstof, suggestieVanDeMaandId, bestellingsnr)  
 IR: vreemde sleutel _suggestieVanDeMaandId_ verwijst naar _id_ uit _SuggestieVanDeMaand_, is optioneel  
 IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestelling_, is optioneel   
-**SuggestieVanDeMaand** (<ins>id</ins>, maand, vegie, omschrijving)
+IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht  
+**SuggestieVanDeMaand** (<ins>id</ins>, maand, vegie, omschrijving)  
+**Dienst** (<ins>id</ins>, naam)
+
 
 ## Screenshots
 

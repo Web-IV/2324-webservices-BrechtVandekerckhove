@@ -1,6 +1,5 @@
 const Router = require("@koa/router");
 const suggestiesService = require("../service/suggesties");
-const { listenerCount } = require("koa");
 
 const getAllSuggesties = async (ctx) => {
   const { maand, vegie } = ctx.query;
@@ -15,12 +14,6 @@ const getAllSuggesties = async (ctx) => {
   }
 };
 
-const getSuggestieByMaandEnVegie = async (ctx) => {
-  ctx.body = await suggestiesService.getByMaandEnVegie(
-    ctx.params.maand,
-    ctx.params.vegie
-  );
-};
 
 /**
  * Install routes in the given router.
