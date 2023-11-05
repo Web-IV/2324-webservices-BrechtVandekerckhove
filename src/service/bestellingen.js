@@ -1,6 +1,4 @@
-const { get } = require("config");
 const { getLogger } = require("../core/logging");
-let { BESTELLINGEN, MEDERWERKERS } = require("../data/mock_data");
 const bestellingenRepository = require("../repository/bestellingen");
 
 const getAll = async () => {
@@ -8,21 +6,24 @@ const getAll = async () => {
 };
 
 const getByBestellingsnr = async (bestellingsnr) => {
-  const bestelling = await bestellingenRepository.findByBestellingsnr(
-    bestellingsnr
-  );
-  if (!bestelling) {
+  try {
+    const bestelling = await bestellingenRepository.findByBestellingsnr(
+      bestellingsnr
+    );
+    return bestelling;
+  } catch (error) {
     getLogger().error(
-      `Er is geen bestelling met bestellingsnr ${bestellingsnr}`
+      `er is geen bestelling met bestellingsnr ${bestellingsnr}.`,
+      error
     );
   }
-  return bestelling;
 };
 const deleteByBestellingsnr = async (bestellingsnr) => {
-  const deleted = await bestellingenRepository.deleteByBestellingsnr(
-    bestellingsnr
-  );
-  if (!deleted) {
+  try {
+    const deleted = await bestellingenRepository.deleteByBestellingsnr(
+      bestellingsnr
+    );
+  } catch (error) {
     getLogger().error(
       `Er is geen bestelling met bestellingsnr ${bestellingsnr}`
     );
@@ -30,6 +31,7 @@ const deleteByBestellingsnr = async (bestellingsnr) => {
 };
 
 const create = async (bestelling) => {
+
   const nieuweBestelling = await bestellingenRepository.create(bestelling);
   return nieuweBestelling;
 };

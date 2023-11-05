@@ -16,6 +16,7 @@ try {
 }
 logger.info("Successfully initialized connection to the database");
 
+
 module.exports = prisma;
 
 /*

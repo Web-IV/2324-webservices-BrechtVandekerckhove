@@ -1,4 +1,5 @@
 const prisma = require("../data/prisma");
+const { getLogger } = require("../core/logging");
 
 const findAll = async () => {
   const bestellingen = await prisma.bestelling.findMany({
@@ -21,22 +22,30 @@ const findAll = async () => {
 };
 
 const findByBestellingsnr = async (bestellingsnr) => {
+  try{
   const bestelling = await prisma.bestelling.findUnique({
     where: { bestellingsnr: bestellingsnr },
     include: {
       medewerker: { include: { dienst: true } },
-      maaltijden: { include: { suggestieVanDeMaand: true, leverplaats: true } },
+      maaltijden: {
+        include: { suggestieVanDeMaand: true, leverplaats: true },
+      },
     },
   });
 
   const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
     return transformedMaaltijd(maaltijd);
   });
+
   return {
     ...bestelling,
-
     maaltijden: transformedMaaltijden,
   };
+}
+catch(error){
+  getLogger().error(`Error in findByBestellingsnr.`, error);
+  throw error;
+}
 };
 
 //booleans omvormen naar strings
@@ -57,18 +66,25 @@ const transformedMaaltijd = (maaltijd) => {
 
 const deleteByBestellingsnr = async (bestellingsnr) => {
   //bijhorende maaltijden worden ook vewijderd door cascade in schema.prisma
-  const deleted = await prisma.bestelling.delete({
-    where: { bestellingsnr: bestellingsnr },
-  });
-  return deleted;
+  try {
+    const deleted = await prisma.bestelling.delete({
+      where: { bestellingsnr: bestellingsnr },
+    });
+    return deleted;
+  } catch (error) {
+    getLogger().error(`Error in deleteByBestellingsnr.`, error);
+    throw error;
+  }
 };
 
+//error logging nog toevoegen
 const create = async (bestelling) => {
+  try{
   const transformedMaaltijden = await Promise.all(
     bestelling.maaltijden.map(async (maaltijd) => {
-      //suggestieVanDeMaanOmschrijving niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
+      //suggestieVanDeMaand niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
       //leverplaats omzetten naar leverplaatsId
-      const { suggestieVanDeMaandOmschrijving, leverplaats, ...rest } =
+      const { suggestieVanDeMaand, leverplaats, ...rest } =
         maaltijd;
       const { id: leverplaatsId } = await prisma.dienst.findUnique({
         where: { naam: leverplaats },
@@ -105,7 +121,12 @@ const create = async (bestelling) => {
       maaltijden: true, // Hiermee worden de toegevoegde maaltijden opgenomen in het resultaat
     },
   });
-  return createdBestelling;
+
+  return createdBestelling;}
+  catch(error){
+    getLogger().error(`Error in create.`, error);
+    throw error;
+  }
 };
 
 module.exports = {
