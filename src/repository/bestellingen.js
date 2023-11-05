@@ -8,13 +8,11 @@ const findAll = async () => {
     },
   });
   const transformedBestellingen = bestellingen.map((bestelling) => {
-    const transformedMedewerker = medewerkerOmvormen(bestelling.medewerker);
     const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
       return transformedMaaltijd(maaltijd);
     });
     return {
       ...bestelling,
-      medewerker: transformedMedewerker,
       maaltijden: transformedMaaltijden,
     };
   });
@@ -27,32 +25,24 @@ const findByBestellingsnr = async (bestellingsnr) => {
     where: { bestellingsnr: bestellingsnr },
     include: {
       medewerker: { include: { dienst: true } },
-      maaltijden: {
-        include: { suggestieVanDeMaand: true },
-      },
+      maaltijden: { include: { suggestieVanDeMaand: true, leverplaats: true } },
     },
   });
+
   const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
     return transformedMaaltijd(maaltijd);
   });
-  return { ...bestelling, maaltijden: transformedMaaltijden };
-};
+  return {
+    ...bestelling,
 
-//dienstnaam uit dienst halen
-const medewerkerOmvormen = (medewerker) => {
-  const { dienst, ...rest } = medewerker;
-  const transformedMedewerker = {
-    ...rest,
+    maaltijden: transformedMaaltijden,
   };
-  transformedMedewerker.dienst = medewerker.dienst.naam;
-  return transformedMedewerker;
 };
 
-//booleans omvormen naar strings en suggestieVanDeMaandOmschrijving toevoegen
+//booleans omvormen naar strings
 const transformedMaaltijd = (maaltijd) => {
-  const { suggestieVanDeMaand, leverplaats, ...rest } = maaltijd;
   const transformedMaaltijd = {
-    ...rest,
+    ...maaltijd,
     soep:
       maaltijd.soep === null ? null : maaltijd.soep ? "dagsoep" : "geen soep",
     vetstof:
@@ -62,16 +52,11 @@ const transformedMaaltijd = (maaltijd) => {
         ? "vetstof"
         : "geen vetstof",
   };
-  if (suggestieVanDeMaand) {
-    transformedMaaltijd.suggestieVanDeMaandOmschrijving =
-      suggestieVanDeMaand.omschrijving;
-  }
-  transformedMaaltijd.leverplaats = leverplaats.naam;
   return transformedMaaltijd;
 };
 
 const deleteByBestellingsnr = async (bestellingsnr) => {
-  //bijhorende maaltijden worden ook vewijdered door cascade in schema.prisma
+  //bijhorende maaltijden worden ook vewijderd door cascade in schema.prisma
   const deleted = await prisma.bestelling.delete({
     where: { bestellingsnr: bestellingsnr },
   });

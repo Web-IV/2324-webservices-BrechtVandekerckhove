@@ -78,6 +78,10 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 - De (vegetarische) suggestie van bepaalde maand kan worden opgevraagd:  
 `GET /api/suggesties?maand=${maand}&vegie={vegie}`
 
+### Dienst
+- De diensten kunnen worden opgevraagd:  
+`GET /api/diensten`  
+
 ### Maaltijd (momenteel via localstorage, later schrappen?)
 
 - Een gebruiker moet een maaltijd kunnen aanmaken:  
