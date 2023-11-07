@@ -119,7 +119,7 @@ describe("Bestellingen", () => {
   });
 
   const url = "/api/bestellingen";
-  
+
   describe("GET /api/bestellingen", () => {
     beforeAll(async () => {
       await prisma.dienst.createMany({
@@ -502,11 +502,72 @@ describe("Bestellingen", () => {
       });
     });
 
-    it('should 204 and return nothing', async () => {
+    it("should 204 and return nothing", async () => {
       const response = await request.delete(`${url}/100`);
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
     });
+  });
 
+  describe("GET /api/bestellingen/leverdata", () => {
+    beforeAll(async () => {
+      await prisma.dienst.createMany({
+        data: testDataDiensten,
+      });
+
+      await prisma.suggestieVanDeMaand.createMany({
+        data: testDataSuggestieVanDeMaand,
+      });
+
+      await prisma.medewerker.create({
+        include: {
+          bestellingen: {
+            include: {
+              maaltijden: true,
+            },
+          },
+        },
+        data: testdataMedewerkerBestellingen,
+      });
+    });
+
+    afterAll(async () => {
+      await prisma.bestelling.deleteMany({
+        where: {
+          bestellingsnr: { in: dataToDelete.bestellingen },
+        },
+      });
+
+      const medewerkerToDelete = await prisma.medewerker.findFirst({
+        where: {
+          naam: "Test",
+          voornaam: "User",
+        },
+      });
+      await prisma.medewerker.delete({
+        where: {
+          id: medewerkerToDelete.id,
+        },
+      });
+      await prisma.dienst.deleteMany({
+        where: {
+          id: { in: dataToDelete.diensten },
+        },
+      });
+      await prisma.suggestieVanDeMaand.deleteMany({
+        where: {
+          id: { in: dataToDelete.suggestieVanDeMaand },
+        },
+      });
+    });
+
+    it("should 200 and return all leverdata", async () => {
+      const response = await request.get(`${url}/leverdata`);
+      expect(response.status).toBe(200);
+      expect(response.body.items.length).toBe(3);
+      expect(response.body.items).toContain(new Date("2023-12-06").toISOString());
+      expect(response.body.items).toContain(new Date("2023-12-09").toISOString());
+      expect(response.body.items).toContain(new Date("2023-12-12").toISOString());
+    });
   });
 });
