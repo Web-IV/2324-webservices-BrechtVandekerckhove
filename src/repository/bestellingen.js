@@ -81,29 +81,44 @@ const create = async (bestelling) => {
   try {
     const transformedMaaltijden = await Promise.all(
       bestelling.maaltijden.map(async (maaltijd) => {
-        //suggestieVanDeMaand niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
-        //leverplaats omzetten naar leverplaatsId
-        const { suggestieVanDeMaand, leverplaats, ...rest } = maaltijd;
-        const { id: leverplaatsId } = await prisma.dienst.findUnique({
-          where: { naam: leverplaats },
+        //eerst controle of er al een maaltijd bestaat op dezelfde leverdatum voor dezelfde medewerker
+        const maaltijdMetZelfdeLeverdatum = await prisma.maaltijd.findFirst({
+          where: {
+            bestelling: {
+              medewerkerId: bestelling.medewerkerId,
+            },
+            leverdatum: maaltijd.leverdatum,
+          },
         });
+        if (maaltijdMetZelfdeLeverdatum) {
+          throw new Error(
+            `Reeds maaltijd gekend op leverdatum ${maaltijd.leverdatum} voor medewerker met id ${bestelling.medewerkerId}.`
+          );
+        } else {
+          //suggestieVanDeMaand niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
+          //leverplaats omzetten naar leverplaatsId
+          const { suggestieVanDeMaand, leverplaats, ...rest } = maaltijd;
+          const { id: leverplaatsId } = await prisma.dienst.findUnique({
+            where: { naam: leverplaats },
+          });
 
-        return {
-          ...rest,
-          leverplaatsId: leverplaatsId,
-          soep:
-            maaltijd.soep === undefined
-              ? null
-              : maaltijd.soep === "dagsoep"
-              ? true
-              : false,
-          vetstof:
-            maaltijd.vetstof === undefined
-              ? null
-              : maaltijd.vetstof === "vetstof"
-              ? true
-              : false,
-        };
+          return {
+            ...rest,
+            leverplaatsId: leverplaatsId,
+            soep:
+              maaltijd.soep === undefined
+                ? null
+                : maaltijd.soep === "dagsoep"
+                ? true
+                : false,
+            vetstof:
+              maaltijd.vetstof === undefined
+                ? null
+                : maaltijd.vetstof === "vetstof"
+                ? true
+                : false,
+          };
+        }
       })
     );
 
@@ -115,7 +130,8 @@ const create = async (bestelling) => {
           create: transformedMaaltijden, // maaltijden creeeren (id wordt hier automatisch gegenereerd )
         },
       },
-      include: {medewerker:true,
+      include: {
+        medewerker: true,
         maaltijden: {
           include: { suggestieVanDeMaand: true, leverplaats: true },
         }, // Hiermee worden de toegevoegde maaltijden,suggestie, medewerker en leverplaats opgenomen in het resultaat
