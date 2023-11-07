@@ -6,6 +6,7 @@ const validate = require("../core/validation");
 const getAllBestellingen = async (ctx) => {
   ctx.body = await bestellingService.getAll();
 };
+getAllBestellingen.validationScheme = null;
 
 const createBestelling = async (ctx) => {
   const nieuweBestelling = await bestellingService.create(ctx.request.body);
@@ -30,11 +31,18 @@ createBestelling.validationScheme = {
         typeSandwiches: Joi.string().max(191).allow(null).optional(),
         hartigBeleg: Joi.string().max(191).allow(null).optional(),
         zoetBeleg: Joi.string().max(191).allow(null).optional(),
-        vetstof: Joi.string().valid("vetstof", "geen vetstof").allow(null).optional(),
+        vetstof: Joi.string()
+          .valid("vetstof", "geen vetstof")
+          .allow(null)
+          .optional(),
         //minimaal 1 dag in de toekomst
         leverdatum: Joi.date().iso().min(tomorrow.toISOString()),
         leverplaats: Joi.string().max(191),
-        suggestieVanDeMaandId: Joi.number().integer().positive().allow(null).optional(),
+        suggestieVanDeMaandId: Joi.number()
+          .integer()
+          .positive()
+          .allow(null)
+          .optional(),
         suggestieVanDeMaand: Joi.string().max(191).allow(null).optional(),
       })
     ),
@@ -57,10 +65,16 @@ const deleteBestelling = async (ctx) => {
   );
   ctx.status = 204; //succesvol verwerkt, geen content teruggegeven
 };
+deleteBestelling.validationScheme = {
+  params: Joi.object({
+    bestellingsnr: Joi.number().integer().positive(),
+  }),
+};
 
 const getLeverdataBestellingen = async (ctx) => {
   ctx.body = await bestellingService.getLeverdata();
 };
+getLeverdataBestellingen.validationScheme = null;
 
 /**
  * Install  routes in the given router.
@@ -72,15 +86,31 @@ module.exports = (app) => {
     prefix: "/bestellingen",
   });
 
-  router.get("/", getAllBestellingen);
-  router.post("/",validate( createBestelling.validationScheme), createBestelling);
-  router.get("/leverdata", getLeverdataBestellingen);
+  router.get(
+    "/",
+    validate(getAllBestellingen.validationScheme),
+    getAllBestellingen
+  );
+  router.post(
+    "/",
+    validate(createBestelling.validationScheme),
+    createBestelling
+  );
+  router.get(
+    "/leverdata",
+    validate(getLeverdataBestellingen.validationScheme),
+    getLeverdataBestellingen
+  );
   router.get(
     "/:bestellingsnr",
     validate(getBestellingByBestellingsnr.validationScheme),
     getBestellingByBestellingsnr
   );
-  router.delete("/:bestellingsnr", deleteBestelling);
+  router.delete(
+    "/:bestellingsnr",
+    validate(deleteBestelling.validationScheme),
+    deleteBestelling
+  );
 
   app.use(router.routes()).use(router.allowedMethods());
 };

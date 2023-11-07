@@ -1,10 +1,12 @@
 const Router = require("@koa/router");
 const dienstenService = require("../service/diensten");
+const validate = require("../core/validation");
+
 
 const getAllDiensten = async (ctx) => {
   ctx.body = await dienstenService.getAll();
 };
-
+getAllDiensten.validationScheme = null;
 /**
  * Install routes in the given router.
  *
@@ -15,7 +17,7 @@ module.exports = (app) => {
     prefix: "/diensten",
   });
 
-  router.get("/", getAllDiensten);
+  router.get("/", validate(getAllDiensten.validationScheme), getAllDiensten);
 
   app.use(router.routes()).use(router.allowedMethods());
 };

@@ -1,5 +1,7 @@
 const Router = require("@koa/router");
 const suggestiesService = require("../service/suggesties");
+const Joi = require("joi");
+const validate = require("../core/validation");
 
 const getAllSuggesties = async (ctx) => {
   const { maand, vegie } = ctx.query;
@@ -13,7 +15,12 @@ const getAllSuggesties = async (ctx) => {
     ctx.body = await suggestiesService.getAll();
   }
 };
-
+getAllSuggesties.validationScheme = {
+  query: {
+    maand: Joi.number().integer().positive().optional(),
+    vegie: Joi.boolean().optional(),
+  },
+};
 
 /**
  * Install routes in the given router.
@@ -25,7 +32,11 @@ module.exports = (app) => {
     prefix: "/suggesties",
   });
 
-  router.get("/", getAllSuggesties);
+  router.get(
+    "/",
+    validate(getAllSuggesties.validationScheme),
+    getAllSuggesties
+  );
 
   app.use(router.routes()).use(router.allowedMethods());
 };
