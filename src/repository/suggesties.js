@@ -11,6 +11,6 @@ const findByMaandEnVegie = async (maand, vegie) => {
   const suggestie = await prisma.suggestieVanDeMaand.findFirst({
     where: { maand, vegie },
   });
-  return { items: suggestie.omschrijving };
+  return {  omschrijving: suggestie.omschrijving  };
 };
 module.exports = { findAll, findByMaandEnVegie };

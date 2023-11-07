@@ -75,7 +75,7 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 - De suggesties moeten opgevraagd kunnen worden:  
 `GET /api/suggesties` 
 
-- De (vegetarische) suggestie van bepaalde maand kan worden opgevraagd:  
+- De omschrijving van een bepaalde (vegetarische) suggestie van bepaalde maand kan worden opgevraagd:  
 `GET /api/suggesties?maand=${maand}&vegie={vegie}`
 
 ### Dienst
