@@ -59,7 +59,7 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 - Een gebruiker moet zijn bestelling in detail kunnen bekijken:  
   `GET /api/bestellingen/:bestellingsnr` (gebruikersId zit in de token)
 
-- Alle leverdata van alle bestellingen moeten opgevraagd kunnen worden zodat een nieuwe maaltijd niet op eenzelfde leverdatum geplaatst wordt:
+- Alle leverdata van alle bestellingen moeten opgevraagd kunnen worden zodat een nieuwe maaltijd niet op eenzelfde leverdatum geplaatst wordt:  
 `GET /api/bestellingen/leverdata`
 
 - Een gebruiker moet een winkelmandje kunnen bevestigen, bestelling dus plaatsen:  

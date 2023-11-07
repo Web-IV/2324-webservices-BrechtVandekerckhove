@@ -85,7 +85,7 @@ describe("Suggesties", () => {
       expect(response.body.items).toContainEqual(suggestie3);
     });
   });
-  describe("GGET /api/suggesties?maand=${maand}&vegie={vegie}", () => {
+  describe("GET /api/suggesties?maand=${maand}&vegie={vegie}", () => {
     beforeAll(async () => {
       await prisma.suggestieVanDeMaand.createMany({
         data: testDataSuggestieVanDeMaand,
