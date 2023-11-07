@@ -449,4 +449,64 @@ describe("Bestellingen", () => {
       bestellingenToDelete.push(response.body.bestellingsnr);
     });
   });
+
+  describe("DELETE /api/bestellingen/:id", () => {
+    beforeAll(async () => {
+      await prisma.dienst.createMany({
+        data: testDataDiensten,
+      });
+
+      await prisma.suggestieVanDeMaand.createMany({
+        data: testDataSuggestieVanDeMaand,
+      });
+
+      await prisma.medewerker.create({
+        include: {
+          bestellingen: {
+            include: {
+              maaltijden: true,
+            },
+          },
+        },
+        data: testdataMedewerkerBestellingen,
+      });
+    });
+
+    afterAll(async () => {
+      await prisma.bestelling.delete({
+        where: {
+          bestellingsnr: 101,
+        },
+      });
+
+      const medewerkerToDelete = await prisma.medewerker.findFirst({
+        where: {
+          naam: "Test",
+          voornaam: "User",
+        },
+      });
+      await prisma.medewerker.delete({
+        where: {
+          id: medewerkerToDelete.id,
+        },
+      });
+      await prisma.dienst.deleteMany({
+        where: {
+          id: { in: dataToDelete.diensten },
+        },
+      });
+      await prisma.suggestieVanDeMaand.deleteMany({
+        where: {
+          id: { in: dataToDelete.suggestieVanDeMaand },
+        },
+      });
+    });
+
+    it('should 204 and return nothing', async () => {
+      const response = await request.delete(`${url}/100`);
+      expect(response.statusCode).toBe(204);
+      expect(response.body).toEqual({});
+    });
+
+  });
 });
