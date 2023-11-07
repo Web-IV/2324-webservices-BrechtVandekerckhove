@@ -17,6 +17,7 @@ module.exports = async function createServer() {
       NODE_ENV,
     },
   });
+  
   // installRest aanroepen na de logger initialisatie!!!
   const installRest = require("./rest");
   const app = new Koa();
@@ -39,7 +40,6 @@ module.exports = async function createServer() {
     },
     async stop() {
       app.removeAllListeners();
-      await shutdownData();
       getLogger().info("Goodbye! 👋");
     },
   };

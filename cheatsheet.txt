@@ -5,3 +5,6 @@ database seeden:
 prisma db seed 
 prisma migrate reset (eerst wissen, dan seeden)
 
+
+database leegmaken:
+prisma db push --force-reset 

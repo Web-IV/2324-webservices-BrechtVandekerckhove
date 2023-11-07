@@ -8,6 +8,7 @@ const getAllBestellingen = async (ctx) => {
 const nieuweBestelling = async (ctx) => {
   const nieuweBestelling = await bestellingService.create(ctx.request.body);
   ctx.body = nieuweBestelling;
+  ctx.status = 201; //created
 };
 
 const getBestellingByBestellingsnr = async (ctx) => {

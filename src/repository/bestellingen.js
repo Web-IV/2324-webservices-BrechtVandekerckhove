@@ -22,30 +22,29 @@ const findAll = async () => {
 };
 
 const findByBestellingsnr = async (bestellingsnr) => {
-  try{
-  const bestelling = await prisma.bestelling.findUnique({
-    where: { bestellingsnr: bestellingsnr },
-    include: {
-      medewerker: { include: { dienst: true } },
-      maaltijden: {
-        include: { suggestieVanDeMaand: true, leverplaats: true },
+  try {
+    const bestelling = await prisma.bestelling.findUnique({
+      where: { bestellingsnr: bestellingsnr },
+      include: {
+        medewerker: { include: { dienst: true } },
+        maaltijden: {
+          include: { suggestieVanDeMaand: true, leverplaats: true },
+        },
       },
-    },
-  });
+    });
 
-  const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
-    return transformedMaaltijd(maaltijd);
-  });
+    const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
+      return transformedMaaltijd(maaltijd);
+    });
 
-  return {
-    ...bestelling,
-    maaltijden: transformedMaaltijden,
-  };
-}
-catch(error){
-  getLogger().error(`Error in findByBestellingsnr.`, error);
-  throw error;
-}
+    return {
+      ...bestelling,
+      maaltijden: transformedMaaltijden,
+    };
+  } catch (error) {
+    getLogger().error(`Error in findByBestellingsnr.`, error);
+    throw error;
+  }
 };
 
 //booleans omvormen naar strings
@@ -79,51 +78,51 @@ const deleteByBestellingsnr = async (bestellingsnr) => {
 
 //error logging nog toevoegen
 const create = async (bestelling) => {
-  try{
-  const transformedMaaltijden = await Promise.all(
-    bestelling.maaltijden.map(async (maaltijd) => {
-      //suggestieVanDeMaand niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
-      //leverplaats omzetten naar leverplaatsId
-      const { suggestieVanDeMaand, leverplaats, ...rest } =
-        maaltijd;
-      const { id: leverplaatsId } = await prisma.dienst.findUnique({
-        where: { naam: leverplaats },
-      });
+  try {
+    const transformedMaaltijden = await Promise.all(
+      bestelling.maaltijden.map(async (maaltijd) => {
+        //suggestieVanDeMaand niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
+        //leverplaats omzetten naar leverplaatsId
+        const { suggestieVanDeMaand, leverplaats, ...rest } = maaltijd;
+        const { id: leverplaatsId } = await prisma.dienst.findUnique({
+          where: { naam: leverplaats },
+        });
 
-      return {
-        ...rest,
-        leverplaatsId: leverplaatsId,
-        soep:
-          maaltijd.soep === undefined
-            ? null
-            : maaltijd.soep === "dagsoep"
-            ? true
-            : false,
-        vetstof:
-          maaltijd.vetstof === undefined
-            ? null
-            : maaltijd.vetstof === "vetstof"
-            ? true
-            : false,
-      };
-    })
-  );
+        return {
+          ...rest,
+          leverplaatsId: leverplaatsId,
+          soep:
+            maaltijd.soep === undefined
+              ? null
+              : maaltijd.soep === "dagsoep"
+              ? true
+              : false,
+          vetstof:
+            maaltijd.vetstof === undefined
+              ? null
+              : maaltijd.vetstof === "vetstof"
+              ? true
+              : false,
+        };
+      })
+    );
 
-  const createdBestelling = await prisma.bestelling.create({
-    data: {
-      besteldatum: new Date(), // besteldatum hier laten genereren
-      medewerkerId: bestelling.medewerkerId,
-      maaltijden: {
-        create: transformedMaaltijden, // maaltijden creeeren (id wordt hier automatisch gegenereerd )
+    const createdBestelling = await prisma.bestelling.create({
+      data: {
+        besteldatum: new Date(), // besteldatum hier laten genereren
+        medewerkerId: bestelling.medewerkerId,
+        maaltijden: {
+          create: transformedMaaltijden, // maaltijden creeeren (id wordt hier automatisch gegenereerd )
+        },
       },
-    },
-    include: {
-      maaltijden: true, // Hiermee worden de toegevoegde maaltijden opgenomen in het resultaat
-    },
-  });
-
-  return createdBestelling;}
-  catch(error){
+      include: {medewerker:true,
+        maaltijden: {
+          include: { suggestieVanDeMaand: true, leverplaats: true },
+        }, // Hiermee worden de toegevoegde maaltijden,suggestie, medewerker en leverplaats opgenomen in het resultaat
+      },
+    });
+    return createdBestelling;
+  } catch (error) {
     getLogger().error(`Error in create.`, error);
     throw error;
   }
