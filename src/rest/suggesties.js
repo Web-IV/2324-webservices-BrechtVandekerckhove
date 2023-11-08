@@ -17,7 +17,7 @@ const getAllSuggesties = async (ctx) => {
 };
 getAllSuggesties.validationScheme = {
   query: {
-    maand: Joi.number().integer().positive().optional(),
+    maand: Joi.number().integer().min(1).max(12).optional(),
     vegie: Joi.boolean().optional(),
   },
 };

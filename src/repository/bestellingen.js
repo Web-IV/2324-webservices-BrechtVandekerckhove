@@ -98,10 +98,13 @@ const create = async (bestelling) => {
           //suggestieVanDeMaand niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
           //leverplaats omzetten naar leverplaatsId
           const { suggestieVanDeMaand, leverplaats, ...rest } = maaltijd;
-          const { id: leverplaatsId } = await prisma.dienst.findUnique({
+          const leverplaatsRecord = await prisma.dienst.findUnique({
             where: { naam: leverplaats },
           });
-
+          if (leverplaatsRecord===null) {
+            throw new Error(`Leverplaats ${leverplaats} bestaat niet.`);
+          }
+          const { id: leverplaatsId } = leverplaatsRecord;
           return {
             ...rest,
             leverplaatsId: leverplaatsId,
