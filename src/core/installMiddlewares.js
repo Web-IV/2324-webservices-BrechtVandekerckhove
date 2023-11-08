@@ -3,9 +3,9 @@ const bodyParser = require("koa-bodyparser");
 const koaCors = require("@koa/cors");
 const emoji = require("node-emoji");
 const { getLogger } = require("./logging");
-const ServiceError = require('./serviceError');
-const NODE_ENV = config.get('env');
-const koaHelmet = require('koa-helmet');
+const ServiceError = require("./serviceError");
+const NODE_ENV = config.get("env");
+const koaHelmet = require("koa-helmet");
 
 const CORS_ORIGINS = config.get("cors.origins");
 const CORS_MAX_AGE = config.get("cors.maxAge");
@@ -30,7 +30,7 @@ module.exports = function installMiddleware(app) {
     })
   );
   app.use(async (ctx, next) => {
-    getLogger().info(`${emoji.get("fast_forward")} ${ctx.method} ${ctx.url}`); 
+    getLogger().info(`${emoji.get("fast_forward")} ${ctx.method} ${ctx.url}`);
 
     const getStatusEmoji = () => {
       if (ctx.status >= 500) return emoji.get("skull");
@@ -60,33 +60,39 @@ module.exports = function installMiddleware(app) {
   app.use(bodyParser());
 
   app.use(koaHelmet());
-  
+
   app.use(async (ctx, next) => {
     try {
       await next();
     } catch (error) {
-      getLogger().error('Error occured while handling a request', { error }); 
-      let statusCode = error.status || 500; 
+      getLogger().error("Error occured while handling a request", { error });
+      let statusCode = error.status || 500;
       let errorBody = {
-        code: error.code || 'INTERNAL_SERVER_ERROR',
+        code: error.code || "INTERNAL_SERVER_ERROR",
         message: error.message,
         details: error.details || {},
-        stack: NODE_ENV !== 'production' ? error.stack : undefined,
+        stack: NODE_ENV !== "production" ? error.stack : undefined,
       };
-  
-      
+
       if (error instanceof ServiceError) {
+        if (error.isUnauthorized) {
+          statusCode = 401;
+        }
+
+        if (error.isForbidden) {
+          statusCode = 403;
+        }
         if (error.isNotFound) {
           statusCode = 404;
         }
-  
+
         if (error.isValidationFailed) {
           statusCode = 400;
         }
       }
-  
-      ctx.status = statusCode; 
-      ctx.body = errorBody; 
+
+      ctx.status = statusCode;
+      ctx.body = errorBody;
     }
   });
 

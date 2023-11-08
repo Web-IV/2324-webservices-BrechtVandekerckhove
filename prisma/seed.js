@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const Role = require('../../core/rollen');
 
 async function main() {
   const suggestieVanDeMaandData = [
@@ -142,7 +143,7 @@ async function main() {
       voornaam: "Brecht",
       email: "brecht.vandekerckhove@student.hogent.be",
       wachtwoord_hash: '$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4',
-      rollen: JSON.stringify(['user', 'admin']),
+      rollen: JSON.stringify([Role.ADMIN, Role.USER]),
       dienst: {
         connect: {
           naam: "labo 24u",
@@ -215,7 +216,7 @@ async function main() {
       voornaam: "Melissa",
       email: "melissa.balcaen@uzgent.be",
       wachtwoord_hash: '$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4',
-      rollen: JSON.stringify(['user']),
+      rollen: JSON.stringify([Role.USER]),
       dienst: { connect: { naam: "labo 24u" } },
       bestellingen: {
         create: [

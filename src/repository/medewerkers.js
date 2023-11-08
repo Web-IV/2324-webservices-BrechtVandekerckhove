@@ -47,7 +47,10 @@ const create = async ({
   }
 };
 //rollen uitgelaten voor de eenvoud in frontend
-const updateById = async (id, { naam, voornaam, email,wachtwoord_hash,dienst}) => {
+const updateById = async (
+  id,
+  { naam, voornaam, email, wachtwoord_hash, dienst }
+) => {
   try {
     const dienstId = await dienstOmzettenNaarId(dienst);
     const updateMedewerker = await prisma.medewerker.update({
@@ -71,13 +74,18 @@ const deleteById = async (id) => {
     const deleteMedewerker = await prisma.medewerker.delete({
       where: { id: id },
     });
-
   } catch (error) {
     getLogger().error(`Error in delete medewerker.`, { error });
     throw error;
   }
 };
+const findByEmail = async (email) => {
+  const medewerker = await prisma.medewerker.findUnique({
+    where: { email: email },
+  });
 
+  return medewerker;
+};
 const dienstOmzettenNaarId = async (dienst) => {
   const dienstRecord = await prisma.dienst.findUnique({
     where: { naam: dienst },
@@ -92,4 +100,11 @@ const dienstOmzettenNaarId = async (dienst) => {
   return dienstRecord.id;
 };
 
-module.exports = { findAll, findById, create, updateById , deleteById};
+module.exports = {
+  findAll,
+  findById,
+  create,
+  updateById,
+  deleteById,
+  findByEmail,
+};

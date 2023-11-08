@@ -65,6 +65,19 @@ deleteMedewerkerById.validationScheme = {
     id: Joi.number().integer().positive(),
   },
 };
+
+const login = async (ctx) => {
+  const { email, wachtwoord } = ctx.request.body;
+  const token = await medewerkerService.login(email, wachtwoord);
+  ctx.body = token; 
+};
+login.validationScheme = { 
+  body: {
+    email: Joi.string().email().max(191),
+    wachtwoord: Joi.string(),
+  },
+};
+
 /**
  * Install routes in the given router.
  *
@@ -96,6 +109,8 @@ module.exports = (app) => {
     validate(deleteMedewerkerById.validationScheme),
     deleteMedewerkerById
   );
+
+  router.post('/login', validate(login.validationScheme), login); 
 
   app.use(router.routes()).use(router.allowedMethods());
 };

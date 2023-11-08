@@ -2,6 +2,8 @@ const medewerkerRepository = require("../repository/medewerkers");
 const ServiceError = require("../core/serviceError");
 const handleDBError = require("./_handleDBError");
 const { hashPassword, verifyPassword } = require("../core/password");
+const Role = require("../core/rollen");
+const { generateJWT } = require("../core/jwt");
 
 /**
  * Get all medewerkers.
@@ -9,7 +11,9 @@ const { hashPassword, verifyPassword } = require("../core/password");
 const getAll = async () => {
   const items = await medewerkerRepository.findAll();
   return {
-    items,
+    items: Object.values(items).map((medewerker) => 
+      makeExposedMedewerker(medewerker)
+    ),
     count: items.length,
   };
 };
@@ -22,7 +26,7 @@ const getAll = async () => {
 const getById = async (id) => {
   try {
     const medewerker = await medewerkerRepository.findById(id);
-    return medewerker;
+    return makeExposedMedewerker(medewerker);
   } catch (error) {
     throw handleDBError(error);
   }
@@ -45,9 +49,10 @@ const register = async ({ naam, voornaam, email, wachtwoord, dienst }) => {
       email,
       dienst,
       wachtwoord_hash,
-      rollen: ["user"],
+      rollen: [Role.USER],
     });
-    return await medewerkerRepository.findById(medewerker.id);
+    return await makeLoginData(medewerker);
+
   } catch (error) {
     throw handleDBError(error);
   }
@@ -64,10 +69,19 @@ const register = async ({ naam, voornaam, email, wachtwoord, dienst }) => {
  */
 
 //rollen uitgelaten voor de eenvoud in frontend
-const updateById = async (id, { naam, voornaam, email, wachtwoord,dienst }) => {
+const updateById = async (
+  id,
+  { naam, voornaam, email, wachtwoord, dienst }
+) => {
   const wachtwoord_hash = await hashPassword(wachtwoord);
   try {
-    await medewerkerRepository.updateById(id, { naam, voornaam, email, dienst, wachtwoord_hash});
+    await medewerkerRepository.updateById(id, {
+      naam,
+      voornaam,
+      email,
+      dienst,
+      wachtwoord_hash,
+    });
     return getById(id);
   } catch (error) {
     throw handleDBError(error);
@@ -82,10 +96,50 @@ const updateById = async (id, { naam, voornaam, email, wachtwoord,dienst }) => {
 const deleteById = async (id) => {
   try {
     const deleted = await medewerkerRepository.deleteById(id);
-   
   } catch (error) {
     throw handleDBError(error);
   }
+};
+
+const makeExposedMedewerker = ({ id, voornaam, naam, email, rollen }) => ({
+  id,
+  voornaam,
+  naam,
+  email,
+  rollen,
+});
+
+const makeLoginData = async (medewerker) => {
+  const token = await generateJWT(medewerker);
+  return {
+    medewerker: makeExposedMedewerker(medewerker),
+    token,
+  };
+};
+
+const login = async (email, wachtwoord) => {
+  const medewerker = await userRepository.findByEmail(email);
+  //te testen!!!
+  if (!medewerker) {
+    // DO NOT expose we don't know the user
+    throw ServiceError.unauthorized(
+      "Het opgegeven emailadres en wachtwoord komen niet overeen."
+    );
+  }
+
+  const passwordValid = await verifyPassword(
+    wachtwoord,
+    medewerker.wachtwoord_hash
+  );
+
+  if (!passwordValid) {
+    // DO NOT expose we know the user but an invalid password was given
+    throw ServiceError.unauthorized(
+      "Het opgegeven emailadres en wachtwoord komen niet overeen."
+    );
+  }
+
+  return await makeLoginData(medewerker);
 };
 
 module.exports = {
@@ -94,4 +148,5 @@ module.exports = {
   register,
   updateById,
   deleteById,
+  login,
 };
