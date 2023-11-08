@@ -11,12 +11,15 @@ datasource db {
 }
 
 model Medewerker {
-  id           Int          @id @default(autoincrement())
-  naam         String
-  voornaam     String
-  bestellingen Bestelling[]
-  dienst       Dienst       @relation(fields: [dienstId], references: [id])
-  dienstId     Int
+  id              Int          @id @default(autoincrement())
+  naam            String
+  voornaam        String
+  email           String       @unique
+  wachtwoord_hash String
+  rollen          Json
+  bestellingen    Bestelling[]
+  dienst          Dienst       @relation(fields: [dienstId], references: [id])
+  dienstId        Int
 }
 
 model Bestelling {

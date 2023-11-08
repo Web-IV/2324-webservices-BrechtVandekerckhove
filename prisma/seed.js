@@ -140,6 +140,9 @@ async function main() {
     data: {
       naam: "Vandekerckhove",
       voornaam: "Brecht",
+      email: "brecht.vandekerckhove@student.hogent.be",
+      wachtwoord_hash: '$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4',
+      rollen: JSON.stringify(['user', 'admin']),
       dienst: {
         connect: {
           naam: "labo 24u",
@@ -210,6 +213,9 @@ async function main() {
     data: {
       naam: "Balcaen",
       voornaam: "Melissa",
+      email: "melissa.balcaen@uzgent.be",
+      wachtwoord_hash: '$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4',
+      rollen: JSON.stringify(['user']),
       dienst: { connect: { naam: "labo 24u" } },
       bestellingen: {
         create: [

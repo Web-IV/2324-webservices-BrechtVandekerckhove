@@ -32,7 +32,13 @@ const findByBestellingsnr = async (bestellingsnr) => {
         },
       },
     });
-
+    if (!bestelling) {
+      const error = new Error();
+      error.code = "NOT_FOUND";
+      error.message = `Geen bestelling gevonden met bestellingsnr ${bestellingsnr}`;
+      error.details = { bestellingsnr };
+      throw error;
+    }
     const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
       return transformedMaaltijd(maaltijd);
     });
@@ -69,6 +75,7 @@ const deleteByBestellingsnr = async (bestellingsnr) => {
     const deleted = await prisma.bestelling.delete({
       where: { bestellingsnr: bestellingsnr },
     });
+ 
     return deleted;
   } catch (error) {
     getLogger().error(`Error in deleteByBestellingsnr.`, error);
@@ -101,8 +108,12 @@ const create = async (bestelling) => {
           const leverplaatsRecord = await prisma.dienst.findUnique({
             where: { naam: leverplaats },
           });
-          if (leverplaatsRecord===null) {
-            throw new Error(`Leverplaats ${leverplaats} bestaat niet.`);
+          if (leverplaatsRecord === null) {
+            const error = new Error();
+            error.code = "NOT_FOUND";
+            error.message = `Leverplaats ${leverplaats} is niet gekend.`;
+            error.details = { leverplaats };
+            throw error;
           }
           const { id: leverplaatsId } = leverplaatsRecord;
           return {

@@ -13,10 +13,7 @@ const getByBestellingsnr = async (bestellingsnr) => {
     );
     return bestelling;
   } catch (error) {
-    throw ServiceError.notFound(
-      `Geen bestelling gevonden met bestellingsnr ${bestellingsnr}`,
-      { bestellingsnr }
-    );
+    throw handleDBError(error);
   }
 };
 const deleteByBestellingsnr = async (bestellingsnr) => {
@@ -25,10 +22,9 @@ const deleteByBestellingsnr = async (bestellingsnr) => {
       bestellingsnr
     );
   } catch (error) {
-    throw ServiceError.notFound(error.message, { bestellingsnr });
+    throw handleDBError(error);
   }
 };
-
 
 const create = async (bestelling) => {
   try {
