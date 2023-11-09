@@ -3,7 +3,9 @@ const ServiceError = require("../core/serviceError");
 const handleDBError = require("./_handleDBError");
 const { hashPassword, verifyPassword } = require("../core/password");
 const Role = require("../core/rollen");
-const { generateJWT } = require("../core/jwt");
+const { generateJWT, verifyJWT } = require("../core/jwt");
+const config = require("config");
+const { getLogger } = require("../core/logging");
 
 /**
  * Get all medewerkers.
@@ -11,7 +13,7 @@ const { generateJWT } = require("../core/jwt");
 const getAll = async () => {
   const items = await medewerkerRepository.findAll();
   return {
-    items: Object.values(items).map((medewerker) => 
+    items: Object.values(items).map((medewerker) =>
       makeExposedMedewerker(medewerker)
     ),
     count: items.length,
@@ -43,7 +45,7 @@ const getById = async (id) => {
 const register = async ({ naam, voornaam, email, wachtwoord, dienst }) => {
   try {
     const wachtwoord_hash = await hashPassword(wachtwoord);
-    const medewerker = await medewerkerRepository.create({
+    const medewerkerId = await medewerkerRepository.create({
       naam,
       voornaam,
       email,
@@ -51,8 +53,9 @@ const register = async ({ naam, voornaam, email, wachtwoord, dienst }) => {
       wachtwoord_hash,
       rollen: [Role.USER],
     });
-    return await makeLoginData(medewerker);
 
+    const medewerker = await medewerkerRepository.findById(medewerkerId);
+    return await makeLoginData(medewerker);
   } catch (error) {
     throw handleDBError(error);
   }
@@ -118,7 +121,7 @@ const makeLoginData = async (medewerker) => {
 };
 
 const login = async (email, wachtwoord) => {
-  const medewerker = await userRepository.findByEmail(email);
+  const medewerker = await medewerkerRepository.findByEmail(email);
   //te testen!!!
   if (!medewerker) {
     // DO NOT expose we don't know the user
@@ -142,6 +145,40 @@ const login = async (email, wachtwoord) => {
   return await makeLoginData(medewerker);
 };
 
+const checkAndParseSession = async (authHeader) => {
+  if (!authHeader) {
+    throw ServiceError.unauthorized("Je moet ingelogd zijn");
+  }
+
+  if (!authHeader.startsWith("Bearer ")) {
+    throw ServiceError.unauthorized("Invalid authentication token");
+  }
+
+  // Remove Bearer from string
+  const authToken = authHeader.substring(7);
+  try {
+    const { roles: rollen, userId: medewerkerId } = await verifyJWT(authToken);
+
+    return {
+      medewerkerId,
+      rollen,
+      authToken,
+    };
+  } catch (error) {
+    getLogger().error(error.message, { error });
+    throw new Error(error.message);
+  }
+};
+const checkRole = (rol, rollen) => {
+  const hasPermission = rollen.includes(rol); 
+
+  if (!hasPermission) {
+    throw ServiceError.forbidden(
+      "Je bent niet gemachtigd om deze actie uit te voeren."
+    );
+  }
+};
+
 module.exports = {
   getAll,
   getById,
@@ -149,4 +186,6 @@ module.exports = {
   updateById,
   deleteById,
   login,
+  checkAndParseSession,
+  checkRole,
 };

@@ -2,7 +2,8 @@ const Router = require("@koa/router");
 const medewerkerService = require("../service/medewerkers");
 const Joi = require("joi");
 const validate = require("../core/validation");
-
+const { requireAuthentication, makeRequireRole } = require("../core/auth");
+const Role = require("../core/rollen");
 
 const getAllMedewerkers = async (ctx) => {
   ctx.body = await medewerkerService.getAll();
@@ -10,9 +11,9 @@ const getAllMedewerkers = async (ctx) => {
 medewerkerService.validationScheme = null;
 
 const register = async (ctx) => {
-  const medewerker = await medewerkerService.register(ctx.request.body);
+  const tokenEnMedewerker = await medewerkerService.register(ctx.request.body);
   ctx.status = 200;
-  ctx.body = medewerker;
+  ctx.body = tokenEnMedewerker;
 };
 register.validationScheme = {
   body: {
@@ -69,9 +70,9 @@ deleteMedewerkerById.validationScheme = {
 const login = async (ctx) => {
   const { email, wachtwoord } = ctx.request.body;
   const token = await medewerkerService.login(email, wachtwoord);
-  ctx.body = token; 
+  ctx.body = token;
 };
-login.validationScheme = { 
+login.validationScheme = {
   body: {
     email: Joi.string().email().max(191),
     wachtwoord: Joi.string(),
@@ -79,38 +80,70 @@ login.validationScheme = {
 };
 
 /**
+ * Check if the signed in user can access the given user's information.
+ */
+const checkMedewerkerId = (ctx, next) => {
+  const { userId: medewerkerId, roles: rollen } = ctx.state.session;
+  const { id } = ctx.params;
+
+  // You can only get our own data unless you're an admin
+  if (id !== medewerkerId && !rollen.includes(Role.ADMIN)) {
+    return ctx.throw(
+      403,
+      "Je bent niet gemachtigd om de gegevens van deze gebruiker te bekijken",
+      {
+        code: "FORBIDDEN",
+      }
+    );
+  }
+  return next();
+};
+
+/**
  * Install routes in the given router.
  *
  * @param {Router} app - The parent router.
  */
-module.exports = (app) => {
+module.exports = function installMedewerkersRoutes(app) {
   const router = new Router({
     prefix: "/medewerkers",
   });
+  //publieke routes
+  router.post("/register", validate(register.validationScheme), register);
+  router.post("/login", validate(login.validationScheme), login);
 
+  const requireAdmin = makeRequireRole(Role.ADMIN);
+
+  //Routes met authenticatie/authorisatie
   router.get(
     "/",
+    requireAuthentication,
+    requireAdmin,
     validate(getAllMedewerkers.validationScheme),
     getAllMedewerkers
   );
   router.get(
     "/:id",
+    requireAuthentication,
     validate(getMedewerkerById.validationScheme),
+    checkMedewerkerId,
     getMedewerkerById
   );
-  router.post("/register", validate(register.validationScheme), register);
+
   router.put(
     "/:id",
+    requireAuthentication,
     validate(updateMedewerkerById.validationScheme),
+    checkMedewerkerId,
     updateMedewerkerById
   );
   router.delete(
     "/:id",
+    requireAuthentication,
     validate(deleteMedewerkerById.validationScheme),
+    checkMedewerkerId,
     deleteMedewerkerById
   );
-
-  router.post('/login', validate(login.validationScheme), login); 
 
   app.use(router.routes()).use(router.allowedMethods());
 };

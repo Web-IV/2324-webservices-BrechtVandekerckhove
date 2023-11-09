@@ -1,13 +1,29 @@
 const prisma = require("../data/prisma");
 const { getLogger } = require("../core/logging");
 
-const findAll = async () => {
-  const bestellingen = await prisma.bestelling.findMany({
-    include: {
-      medewerker: { include: { dienst: true } },
-      maaltijden: { include: { suggestieVanDeMaand: true, leverplaats: true } },
-    },
-  });
+//medewerksId optioneel, indien niet meegegeven worden alle bestellingen opgehaald
+const findAll = async (medewerkerId) => {
+  let bestellingen;
+  if (medewerkerId) {
+     bestellingen = await prisma.bestelling.findMany({
+      where: { medewerkerId: medewerkerId },
+      include: {
+        medewerker: { include: { dienst: true } },
+        maaltijden: {
+          include: { suggestieVanDeMaand: true, leverplaats: true },
+        },
+      },
+    });
+  } else {
+     bestellingen = await prisma.bestelling.findMany({
+      include: {
+        medewerker: { include: { dienst: true } },
+        maaltijden: {
+          include: { suggestieVanDeMaand: true, leverplaats: true },
+        },
+      },
+    });
+  }
   const transformedBestellingen = bestellingen.map((bestelling) => {
     const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
       return transformedMaaltijd(maaltijd);
@@ -75,7 +91,7 @@ const deleteByBestellingsnr = async (bestellingsnr) => {
     const deleted = await prisma.bestelling.delete({
       where: { bestellingsnr: bestellingsnr },
     });
- 
+
     return deleted;
   } catch (error) {
     getLogger().error(`Error in deleteByBestellingsnr.`, error);

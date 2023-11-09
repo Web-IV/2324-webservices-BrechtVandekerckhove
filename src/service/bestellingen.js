@@ -2,8 +2,8 @@ const bestellingenRepository = require("../repository/bestellingen");
 const ServiceError = require("../core/serviceError");
 const handleDBError = require("./_handleDBError");
 
-const getAll = async () => {
-  return await bestellingenRepository.findAll();
+const getAll = async (medewerkerId) => {
+  return await bestellingenRepository.findAll(medewerkerId);
 };
 
 const getByBestellingsnr = async (bestellingsnr) => {

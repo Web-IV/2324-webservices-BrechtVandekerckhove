@@ -30,7 +30,7 @@ const create = async ({
 }) => {
   try {
     const dienstId = await dienstOmzettenNaarId(dienst);
-    const medewerkerId = await prisma.medewerker.create({
+    const { id: medewerkerId } = await prisma.medewerker.create({
       data: {
         naam: naam,
         voornaam: voornaam,

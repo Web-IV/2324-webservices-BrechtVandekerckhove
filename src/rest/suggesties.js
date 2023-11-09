@@ -2,6 +2,7 @@ const Router = require("@koa/router");
 const suggestiesService = require("../service/suggesties");
 const Joi = require("joi");
 const validate = require("../core/validation");
+const { requireAuthentication } = require("../core/auth");
 
 const getAllSuggesties = async (ctx) => {
   const { maand, vegie } = ctx.query;
@@ -35,6 +36,7 @@ module.exports = (app) => {
   router.get(
     "/",
     validate(getAllSuggesties.validationScheme),
+    requireAuthentication,
     getAllSuggesties
   );
 

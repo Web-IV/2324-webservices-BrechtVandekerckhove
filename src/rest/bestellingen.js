@@ -2,14 +2,29 @@ const Router = require("@koa/router");
 const bestellingService = require("../service/bestellingen");
 const Joi = require("joi");
 const validate = require("../core/validation");
+const { requireAuthentication, makeRequireRole } = require("../core/auth");
+const Role = require("../core/rollen");
 
+//ADMIN mag alles zien, USER mag enkel eigen bestellingen zien
 const getAllBestellingen = async (ctx) => {
-  ctx.body = await bestellingService.getAll();
+  const { userId: medewerkerId, roles: rollen } = ctx.state.session;
+  //test
+  //const rollen = [Role.ADMIN];
+  // const medewerkerId = 2;
+  if (rollen.includes(Role.ADMIN)) {
+    ctx.body = await bestellingService.getAll();
+  } else {
+    ctx.body = await bestellingService.getAll(medewerkerId);
+  }
 };
 getAllBestellingen.validationScheme = null;
 
 const createBestelling = async (ctx) => {
-  const nieuweBestelling = await bestellingService.create(ctx.request.body);
+  //medewerkerId toevoegen aan bestelling
+  const { userId: medewerkerId } = ctx.state.session;
+  let bestelling = ctx.request.body;
+  bestelling.medewerkerId = medewerkerId;
+  const nieuweBestelling = await bestellingService.create(bestelling);
   ctx.body = nieuweBestelling;
   ctx.status = 201; //created
 };
@@ -77,6 +92,32 @@ const getLeverdataBestellingen = async (ctx) => {
 getLeverdataBestellingen.validationScheme = null;
 
 /**
+ * Check if the signed in user can access the given bestelling information.
+ */
+const checkBestellingsnr = async (ctx, next) => {
+  const { userId: medewerkerId, roles: rollen } = ctx.state.session;
+  const { bestellingsnr } = ctx.params;
+
+  const { medewerkerId: medewerkerIdVanBestellingsnr } =
+    await bestellingService.getByBestellingsnr(bestellingsnr);
+
+  // You can only get our own data unless you're an admin
+  if (
+    medewerkerIdVanBestellingsnr !== medewerkerId &&
+    !rollen.includes(Role.ADMIN)
+  ) {
+    return ctx.throw(
+      403,
+      "Je bent niet gemachtigd om deze actie uit te voeren",
+      {
+        code: "FORBIDDEN",
+      }
+    );
+  }
+  return next();
+};
+
+/**
  * Install  routes in the given router.
  *
  * @param {Router} app - The parent router.
@@ -89,26 +130,33 @@ module.exports = (app) => {
   router.get(
     "/",
     validate(getAllBestellingen.validationScheme),
+    requireAuthentication,
     getAllBestellingen
   );
   router.post(
     "/",
     validate(createBestelling.validationScheme),
+    requireAuthentication,
     createBestelling
   );
   router.get(
     "/leverdata",
     validate(getLeverdataBestellingen.validationScheme),
+    requireAuthentication,
     getLeverdataBestellingen
   );
   router.get(
     "/:bestellingsnr",
     validate(getBestellingByBestellingsnr.validationScheme),
+    requireAuthentication,
+    checkBestellingsnr,
     getBestellingByBestellingsnr
   );
   router.delete(
     "/:bestellingsnr",
     validate(deleteBestelling.validationScheme),
+    requireAuthentication,
+    checkBestellingsnr,
     deleteBestelling
   );
 
