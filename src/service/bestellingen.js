@@ -2,6 +2,7 @@ const bestellingenRepository = require("../repository/bestellingen");
 const ServiceError = require("../core/serviceError");
 const handleDBError = require("./_handleDBError");
 
+//medewerkersId optioneel, indien niet meegegeven worden alle bestellingen opgehaald
 const getAll = async (medewerkerId) => {
   return await bestellingenRepository.findAll(medewerkerId);
 };

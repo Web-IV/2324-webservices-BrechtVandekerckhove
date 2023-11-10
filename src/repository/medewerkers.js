@@ -106,5 +106,5 @@ module.exports = {
   create,
   updateById,
   deleteById,
-  findByEmail,
+  findByEmail, 
 };

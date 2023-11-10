@@ -5,7 +5,7 @@ const { getLogger } = require("../core/logging");
 const findAll = async (medewerkerId) => {
   let bestellingen;
   if (medewerkerId) {
-     bestellingen = await prisma.bestelling.findMany({
+    bestellingen = await prisma.bestelling.findMany({
       where: { medewerkerId: medewerkerId },
       include: {
         medewerker: { include: { dienst: true } },
@@ -15,7 +15,7 @@ const findAll = async (medewerkerId) => {
       },
     });
   } else {
-     bestellingen = await prisma.bestelling.findMany({
+    bestellingen = await prisma.bestelling.findMany({
       include: {
         medewerker: { include: { dienst: true } },
         maaltijden: {
@@ -28,8 +28,10 @@ const findAll = async (medewerkerId) => {
     const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
       return transformedMaaltijd(maaltijd);
     });
+    const tranformedMedewerker = makeExposedMedewerker(bestelling.medewerker);
     return {
       ...bestelling,
+      medewerker: tranformedMedewerker,
       maaltijden: transformedMaaltijden,
     };
   });
@@ -58,9 +60,11 @@ const findByBestellingsnr = async (bestellingsnr) => {
     const transformedMaaltijden = bestelling.maaltijden.map((maaltijd) => {
       return transformedMaaltijd(maaltijd);
     });
+    const tranformedMedewerker = makeExposedMedewerker(bestelling.medewerker);
 
     return {
       ...bestelling,
+      medewerker: tranformedMedewerker,
       maaltijden: transformedMaaltijden,
     };
   } catch (error) {
@@ -83,6 +87,11 @@ const transformedMaaltijd = (maaltijd) => {
         : "geen vetstof",
   };
   return transformedMaaltijd;
+};
+
+const makeExposedMedewerker = (medewerker) => {
+  const { wachtwoord_hash, ...rest } = medewerker;
+  return rest;
 };
 
 const deleteByBestellingsnr = async (bestellingsnr) => {
@@ -161,13 +170,15 @@ const create = async (bestelling) => {
         },
       },
       include: {
-        medewerker: true,
+        medewerker: { include: { dienst: true } },
         maaltijden: {
           include: { suggestieVanDeMaand: true, leverplaats: true },
         }, // Hiermee worden de toegevoegde maaltijden,suggestie, medewerker en leverplaats opgenomen in het resultaat
       },
     });
-    return createdBestelling;
+    const { medewerker, ...restBestelling } = createdBestelling;
+    const tranformedMedewerker = makeExposedMedewerker(medewerker);
+    return { medewerker: tranformedMedewerker, ...restBestelling };
   } catch (error) {
     getLogger().error(`Error in create.`, error);
     throw error;

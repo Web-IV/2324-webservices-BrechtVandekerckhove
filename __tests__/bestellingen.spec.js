@@ -1,12 +1,6 @@
-const supertest = require("supertest");
-const createServer = require("../src/createServer");
 const jestDate = require("jest-date-mock");
-let prisma;
-
-const testDataDiensten = [
-  { id: 100, naam: "DIENST 1" },
-  { id: 101, naam: "DIENST 2" },
-];
+const { withServer, login } = require("./supertest.setup");
+const { testAuthHeader } = require("./common/auth");
 
 const testDataSuggestieVanDeMaand = [
   {
@@ -23,80 +17,60 @@ const testDataSuggestieVanDeMaand = [
   },
 ];
 
-//id medewerker wordt genereerd door prisma,
 //id maaltijden worden genereerd door prisma
-const testdataMedewerkerBestellingen = {
-  naam: "Test",
-  voornaam: "User",
-  dienst: {
-    connect: {
-      naam: "DIENST 1",
-    },
-  },
-  bestellingen: {
-    create: [
-      {
-        bestellingsnr: 100,
-        besteldatum: new Date("2023-12-05"),
-        maaltijden: {
-          create: [
-            {
-              type: "warmeMaaltijd",
-              leverdatum: new Date("2023-12-06"),
-              leverplaats: { connect: { naam: "DIENST 1" } },
-              hoofdschotel: "lasagne",
-              soep: true,
-              dessert: "zuivel",
-            },
-            {
-              type: "warmeMaaltijd",
-              leverdatum: new Date("2023-12-09"),
-              leverplaats: { connect: { naam: "DIENST 2" } },
-              hoofdschotel: "suggestie",
-              soep: false,
-              dessert: "fruit",
-              suggestieVanDeMaand: {
-                connect: {
-                  maand_vegie: {
-                    maand: 12,
-                    vegie: false,
-                  },
-                },
+//medewerkId in de beforeAll opvragen en toevoegen aan de testdata
+const testdataBestellingen = [
+  {
+    bestellingsnr: 100,
+    besteldatum: new Date("2023-12-05"),
+    maaltijden: {
+      create: [
+        {
+          type: "warmeMaaltijd",
+          leverdatum: new Date("2023-12-06"),
+          leverplaats: { connect: { naam: "DIENST 1" } },
+          hoofdschotel: "lasagne",
+          soep: true,
+          dessert: "zuivel",
+        },
+        {
+          type: "warmeMaaltijd",
+          leverdatum: new Date("2023-12-09"),
+          leverplaats: { connect: { naam: "DIENST 2" } },
+          hoofdschotel: "suggestie",
+          soep: false,
+          dessert: "fruit",
+          suggestieVanDeMaand: {
+            connect: {
+              maand_vegie: {
+                maand: 12,
+                vegie: false,
               },
             },
-          ],
-        },
-      },
-      {
-        bestellingsnr: 101,
-        besteldatum: new Date("2023-12-07"),
-        maaltijden: {
-          create: {
-            type: "broodMaaltijd",
-            leverdatum: new Date("2023-12-12"),
-            leverplaats: { connect: { naam: "DIENST 1" } },
-            typeSandwiches: "wit",
-            soep: true,
-            dessert: "zuivel",
-            hartigBeleg: "salami",
-            zoetBeleg: "confituur",
-            vetstof: true,
           },
         },
-      },
-    ],
-  },
-};
-//id wordt door prisma gegenereerd
-const dataMedewerker = {
-  naam: "Test",
-  voornaam: "User",
-  dienst: {
-    connect: {
-      naam: "DIENST 1",
+      ],
     },
   },
-};
+  {
+    bestellingsnr: 101,
+    besteldatum: new Date("2023-12-07"),
+    maaltijden: {
+      create: {
+        type: "broodMaaltijd",
+        leverdatum: new Date("2023-12-12"),
+        leverplaats: { connect: { naam: "DIENST 1" } },
+        typeSandwiches: "wit",
+        soep: true,
+        dessert: "zuivel",
+        hartigBeleg: "salami",
+        zoetBeleg: "confituur",
+        vetstof: true,
+      },
+    },
+  },
+];
+
 const dataToDelete = {
   bestellingen: [100, 101],
   diensten: [100, 101],
@@ -104,41 +78,39 @@ const dataToDelete = {
 };
 
 describe("Bestellingen", () => {
-  let server;
-  let request;
-
-  beforeAll(async () => {
-    server = await createServer();
-    request = supertest(server.getApp().callback());
-    //hier prisma initialiseren, anders problemen met logger initialisatie
-    prisma = require("../src/data/prisma");
+  let prisma, request, authHeader;
+  withServer(({ supertest, prisma: p }) => {
+    request = supertest;
+    prisma = p;
   });
 
-  afterAll(async () => {
-    await server.stop();
+  beforeAll(async () => {
+    authHeader = await login(request);
   });
 
   const url = "/api/bestellingen";
 
   describe("GET /api/bestellingen", () => {
     beforeAll(async () => {
-      await prisma.dienst.createMany({
-        data: testDataDiensten,
-      });
-
       await prisma.suggestieVanDeMaand.createMany({
         data: testDataSuggestieVanDeMaand,
       });
-
-      await prisma.medewerker.create({
-        include: {
-          bestellingen: {
-            include: {
-              maaltijden: true,
-            },
-          },
+      const { id: testUserId } = await prisma.medewerker.findFirst({
+        where: {
+          email: "test.user@hogent.be",
         },
-        data: testdataMedewerkerBestellingen,
+      });
+      await prisma.bestelling.create({
+        include: {
+          maaltijden: true,
+        },
+        data: { ...testdataBestellingen[0], medewerkerId: testUserId },
+      });
+      await prisma.bestelling.create({
+        include: {
+          maaltijden: true,
+        },
+        data: { ...testdataBestellingen[1], medewerkerId: testUserId },
       });
     });
 
@@ -149,22 +121,6 @@ describe("Bestellingen", () => {
         },
       });
 
-      const medewerkerToDelete = await prisma.medewerker.findFirst({
-        where: {
-          naam: "Test",
-          voornaam: "User",
-        },
-      });
-      await prisma.medewerker.delete({
-        where: {
-          id: medewerkerToDelete.id,
-        },
-      });
-      await prisma.dienst.deleteMany({
-        where: {
-          id: { in: dataToDelete.diensten },
-        },
-      });
       await prisma.suggestieVanDeMaand.deleteMany({
         where: {
           id: { in: dataToDelete.suggestieVanDeMaand },
@@ -173,7 +129,7 @@ describe("Bestellingen", () => {
     });
 
     it("should 200 and return all bestellingen", async () => {
-      const response = await request.get(url);
+      const response = await request.get(url).set("Authorization", authHeader);
       expect(response.status).toBe(200);
       expect(response.body.items.length).toBe(2);
 
@@ -186,6 +142,8 @@ describe("Bestellingen", () => {
           id: expect.anything(),
           naam: "Test",
           voornaam: "User",
+          email: "test.user@hogent.be",
+          rollen: '["user"]',
           dienstId: 100,
           dienst: {
             id: 100,
@@ -241,27 +199,31 @@ describe("Bestellingen", () => {
         ],
       });
     });
+    testAuthHeader(() => request.get(url));
   });
 
   describe("GET /api/bestellingen/:id", () => {
     beforeAll(async () => {
-      await prisma.dienst.createMany({
-        data: testDataDiensten,
-      });
-
       await prisma.suggestieVanDeMaand.createMany({
         data: testDataSuggestieVanDeMaand,
       });
 
-      await prisma.medewerker.create({
-        include: {
-          bestellingen: {
-            include: {
-              maaltijden: true,
-            },
-          },
+      const { id: testUserId } = await prisma.medewerker.findFirst({
+        where: {
+          email: "test.user@hogent.be",
         },
-        data: testdataMedewerkerBestellingen,
+      });
+      await prisma.bestelling.create({
+        include: {
+          maaltijden: true,
+        },
+        data: { ...testdataBestellingen[0], medewerkerId: testUserId },
+      });
+      await prisma.bestelling.create({
+        include: {
+          maaltijden: true,
+        },
+        data: { ...testdataBestellingen[1], medewerkerId: testUserId },
       });
     });
     afterAll(async () => {
@@ -271,22 +233,6 @@ describe("Bestellingen", () => {
         },
       });
 
-      const medewerkerToDelete = await prisma.medewerker.findFirst({
-        where: {
-          naam: "Test",
-          voornaam: "User",
-        },
-      });
-      await prisma.medewerker.delete({
-        where: {
-          id: medewerkerToDelete.id,
-        },
-      });
-      await prisma.dienst.deleteMany({
-        where: {
-          id: { in: dataToDelete.diensten },
-        },
-      });
       await prisma.suggestieVanDeMaand.deleteMany({
         where: {
           id: { in: dataToDelete.suggestieVanDeMaand },
@@ -295,7 +241,9 @@ describe("Bestellingen", () => {
     });
 
     it("should 200 and return the requested bestelling", async () => {
-      const response = await request.get(`${url}/101`);
+      const response = await request
+        .get(`${url}/101`)
+        .set("Authorization", authHeader);
 
       expect(response.statusCode).toBe(200);
       expect(response.body).toEqual({
@@ -307,6 +255,8 @@ describe("Bestellingen", () => {
           id: expect.anything(),
           naam: "Test",
           voornaam: "User",
+          email: "test.user@hogent.be",
+          rollen: '["user"]',
           dienstId: 100,
           dienst: {
             id: 100,
@@ -337,29 +287,16 @@ describe("Bestellingen", () => {
         ],
       });
     });
+    testAuthHeader(() => request.get(url));
   });
 
   describe("POST /api/bestellingen", () => {
     const bestellingenToDelete = [];
-    let medewerkerId;
+
     beforeAll(async () => {
       //tijd vastzetten zodat er geen latency is in de test voor oproep new Date()
       jestDate.advanceTo("2023-11-07T15:40:40.798Z");
-      await prisma.dienst.createMany({
-        data: testDataDiensten,
-      });
 
-      await prisma.medewerker.create({
-        include: { dienst: true },
-        data: dataMedewerker,
-      });
-      const medewerker = await prisma.medewerker.findFirst({
-        where: {
-          naam: "Test",
-          voornaam: "User",
-        },
-      });
-      medewerkerId = medewerker.id;
       await prisma.suggestieVanDeMaand.createMany({
         data: testDataSuggestieVanDeMaand,
       });
@@ -368,16 +305,6 @@ describe("Bestellingen", () => {
       await prisma.bestelling.deleteMany({
         where: {
           bestellingsnr: { in: bestellingenToDelete },
-        },
-      });
-      await prisma.medewerker.delete({
-        where: {
-          id: medewerkerId,
-        },
-      });
-      await prisma.dienst.deleteMany({
-        where: {
-          id: { in: dataToDelete.diensten },
         },
       });
       await prisma.suggestieVanDeMaand.deleteMany({
@@ -390,21 +317,28 @@ describe("Bestellingen", () => {
     });
 
     it("should 201 and return the created bestelling", async () => {
-      const response = await request.post(url).send({
-        medewerkerId: medewerkerId,
-        maaltijden: [
-          {
-            type: "warmeMaaltijd",
-            hoofdschotel: "vegetarische suggestie",
-            soep: "dagsoep",
-            dessert: "fruit",
-            leverdatum: "2023-12-05T23:13:34.996Z",
-            leverplaats: "DIENST 2",
-            suggestieVanDeMaandId: 101,
-            suggestieVanDeMaand: "test vegie suggestie omschrijving december",
-          },
-        ],
+      const { id: medewerkerId } = await prisma.medewerker.findFirst({
+        where: {
+          email: "test.user@hogent.be",
+        },
       });
+      const response = await request
+        .post(url)
+        .set("Authorization", authHeader)
+        .send({
+          maaltijden: [
+            {
+              type: "warmeMaaltijd",
+              hoofdschotel: "vegetarische suggestie",
+              soep: "dagsoep",
+              dessert: "fruit",
+              leverdatum: "2023-12-05T23:13:34.996Z",
+              leverplaats: "DIENST 2",
+              suggestieVanDeMaandId: 101,
+              suggestieVanDeMaand: "test vegie suggestie omschrijving december",
+            },
+          ],
+        });
 
       expect(response.status).toBe(201);
       expect(response.body).toEqual({
@@ -415,7 +349,13 @@ describe("Bestellingen", () => {
           id: medewerkerId,
           naam: "Test",
           voornaam: "User",
+          email: "test.user@hogent.be",
+          rollen: '["user"]',
           dienstId: 100,
+          dienst: {
+            id: 100,
+            naam: "DIENST 1",
+          },
         },
         maaltijden: [
           {
@@ -448,27 +388,31 @@ describe("Bestellingen", () => {
 
       bestellingenToDelete.push(response.body.bestellingsnr);
     });
+    testAuthHeader(() => request.get(url));
   });
 
   describe("DELETE /api/bestellingen/:id", () => {
     beforeAll(async () => {
-      await prisma.dienst.createMany({
-        data: testDataDiensten,
-      });
-
       await prisma.suggestieVanDeMaand.createMany({
         data: testDataSuggestieVanDeMaand,
       });
 
-      await prisma.medewerker.create({
-        include: {
-          bestellingen: {
-            include: {
-              maaltijden: true,
-            },
-          },
+      const { id: testUserId } = await prisma.medewerker.findFirst({
+        where: {
+          email: "test.user@hogent.be",
         },
-        data: testdataMedewerkerBestellingen,
+      });
+      await prisma.bestelling.create({
+        include: {
+          maaltijden: true,
+        },
+        data: { ...testdataBestellingen[0], medewerkerId: testUserId },
+      });
+      await prisma.bestelling.create({
+        include: {
+          maaltijden: true,
+        },
+        data: { ...testdataBestellingen[1], medewerkerId: testUserId },
       });
     });
 
@@ -479,22 +423,6 @@ describe("Bestellingen", () => {
         },
       });
 
-      const medewerkerToDelete = await prisma.medewerker.findFirst({
-        where: {
-          naam: "Test",
-          voornaam: "User",
-        },
-      });
-      await prisma.medewerker.delete({
-        where: {
-          id: medewerkerToDelete.id,
-        },
-      });
-      await prisma.dienst.deleteMany({
-        where: {
-          id: { in: dataToDelete.diensten },
-        },
-      });
       await prisma.suggestieVanDeMaand.deleteMany({
         where: {
           id: { in: dataToDelete.suggestieVanDeMaand },
@@ -503,31 +431,37 @@ describe("Bestellingen", () => {
     });
 
     it("should 204 and return nothing", async () => {
-      const response = await request.delete(`${url}/100`);
+      const response = await request
+        .delete(`${url}/100`)
+        .set("Authorization", authHeader);
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
     });
+    testAuthHeader(() => request.get(url));
   });
 
   describe("GET /api/bestellingen/leverdata", () => {
     beforeAll(async () => {
-      await prisma.dienst.createMany({
-        data: testDataDiensten,
-      });
-
       await prisma.suggestieVanDeMaand.createMany({
         data: testDataSuggestieVanDeMaand,
       });
 
-      await prisma.medewerker.create({
-        include: {
-          bestellingen: {
-            include: {
-              maaltijden: true,
-            },
-          },
+      const { id: testUserId } = await prisma.medewerker.findFirst({
+        where: {
+          email: "test.user@hogent.be",
         },
-        data: testdataMedewerkerBestellingen,
+      });
+      await prisma.bestelling.create({
+        include: {
+          maaltijden: true,
+        },
+        data: { ...testdataBestellingen[0], medewerkerId: testUserId },
+      });
+      await prisma.bestelling.create({
+        include: {
+          maaltijden: true,
+        },
+        data: { ...testdataBestellingen[1], medewerkerId: testUserId },
       });
     });
 
@@ -538,22 +472,6 @@ describe("Bestellingen", () => {
         },
       });
 
-      const medewerkerToDelete = await prisma.medewerker.findFirst({
-        where: {
-          naam: "Test",
-          voornaam: "User",
-        },
-      });
-      await prisma.medewerker.delete({
-        where: {
-          id: medewerkerToDelete.id,
-        },
-      });
-      await prisma.dienst.deleteMany({
-        where: {
-          id: { in: dataToDelete.diensten },
-        },
-      });
       await prisma.suggestieVanDeMaand.deleteMany({
         where: {
           id: { in: dataToDelete.suggestieVanDeMaand },
@@ -562,12 +480,21 @@ describe("Bestellingen", () => {
     });
 
     it("should 200 and return all leverdata", async () => {
-      const response = await request.get(`${url}/leverdata`);
+      const response = await request
+        .get(`${url}/leverdata`)
+        .set("Authorization", authHeader);
       expect(response.status).toBe(200);
       expect(response.body.items.length).toBe(3);
-      expect(response.body.items).toContain(new Date("2023-12-06").toISOString());
-      expect(response.body.items).toContain(new Date("2023-12-09").toISOString());
-      expect(response.body.items).toContain(new Date("2023-12-12").toISOString());
+      expect(response.body.items).toContain(
+        new Date("2023-12-06").toISOString()
+      );
+      expect(response.body.items).toContain(
+        new Date("2023-12-09").toISOString()
+      );
+      expect(response.body.items).toContain(
+        new Date("2023-12-12").toISOString()
+      );
     });
+    testAuthHeader(() => request.get(url));
   });
 });

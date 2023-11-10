@@ -104,13 +104,10 @@ const deleteById = async (id) => {
   }
 };
 
-const makeExposedMedewerker = ({ id, voornaam, naam, email, rollen }) => ({
-  id,
-  voornaam,
-  naam,
-  email,
-  rollen,
-});
+const makeExposedMedewerker = (medewerker) => {
+  const { wachtwoord_hash, ...rest } = medewerker;
+  return rest;
+};
 
 const makeLoginData = async (medewerker) => {
   const token = await generateJWT(medewerker);
@@ -157,7 +154,7 @@ const checkAndParseSession = async (authHeader) => {
   // Remove Bearer from string
   const authToken = authHeader.substring(7);
   try {
-    const { roles: rollen, userId: medewerkerId } = await verifyJWT(authToken);
+    const { rollen, medewerkerId } = await verifyJWT(authToken);
 
     return {
       medewerkerId,
@@ -170,7 +167,7 @@ const checkAndParseSession = async (authHeader) => {
   }
 };
 const checkRole = (rol, rollen) => {
-  const hasPermission = rollen.includes(rol); 
+  const hasPermission = rollen.includes(rol);
 
   if (!hasPermission) {
     throw ServiceError.forbidden(
@@ -188,4 +185,5 @@ module.exports = {
   login,
   checkAndParseSession,
   checkRole,
+  makeExposedMedewerker,
 };

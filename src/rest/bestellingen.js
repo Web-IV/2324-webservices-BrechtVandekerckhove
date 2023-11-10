@@ -7,10 +7,7 @@ const Role = require("../core/rollen");
 
 //ADMIN mag alles zien, USER mag enkel eigen bestellingen zien
 const getAllBestellingen = async (ctx) => {
-  const { userId: medewerkerId, roles: rollen } = ctx.state.session;
-  //test
-  //const rollen = [Role.ADMIN];
-  // const medewerkerId = 2;
+  const { medewerkerId, rollen } = ctx.state.session;
   if (rollen.includes(Role.ADMIN)) {
     ctx.body = await bestellingService.getAll();
   } else {
@@ -21,7 +18,7 @@ getAllBestellingen.validationScheme = null;
 
 const createBestelling = async (ctx) => {
   //medewerkerId toevoegen aan bestelling
-  const { userId: medewerkerId } = ctx.state.session;
+  const { medewerkerId } = ctx.state.session;
   let bestelling = ctx.request.body;
   bestelling.medewerkerId = medewerkerId;
   const nieuweBestelling = await bestellingService.create(bestelling);
@@ -36,7 +33,6 @@ tomorrow.setHours(0, 0, 0, 0);
 
 createBestelling.validationScheme = {
   body: {
-    medewerkerId: Joi.number().integer().positive(),
     maaltijden: Joi.array().items(
       Joi.object({
         type: Joi.string().valid("warmeMaaltijd", "broodMaaltijd"),
@@ -92,10 +88,10 @@ const getLeverdataBestellingen = async (ctx) => {
 getLeverdataBestellingen.validationScheme = null;
 
 /**
- * Check if the signed in user can access the given bestelling information.
+ * Check if the signed in medewerker can access the given bestelling information.
  */
 const checkBestellingsnr = async (ctx, next) => {
-  const { userId: medewerkerId, roles: rollen } = ctx.state.session;
+  const { medewerkerId, rollen } = ctx.state.session;
   const { bestellingsnr } = ctx.params;
 
   const { medewerkerId: medewerkerIdVanBestellingsnr } =

@@ -9,13 +9,11 @@ const requireAuthentication = async (ctx, next) => {
 
   ctx.state.session = session;
   ctx.state.authToken = authToken;
-
   return next();
 };
 //autorisatie
 const makeRequireRole = (rol) => async (ctx, next) => {
   const { rollen = [] } = ctx.state.session;
-
   medewerkerService.checkRole(rol, rollen);
   return next();
 };
