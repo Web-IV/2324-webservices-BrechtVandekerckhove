@@ -1,7 +1,5 @@
-const supertest = require("supertest");
-const createServer = require("../src/createServer");
-
-let prisma;
+const { withServer, login, loginAdmin } = require("./supertest.setup");
+const { testAuthHeader } = require("./common/auth");
 
 const testDataSuggestieVanDeMaand = [
   {
@@ -27,18 +25,14 @@ const testDataSuggestieVanDeMaand = [
 const suggestiesToDelete = [99, 100, 101];
 
 describe("Suggesties", () => {
-  let server;
-  let request;
-
-  beforeAll(async () => {
-    server = await createServer();
-    request = supertest(server.getApp().callback());
-    //hier prisma initialiseren, anders problemen met logger initialisatie
-    prisma = require("../src/data/prisma");
+  let prisma, request, authHeader;
+  withServer(({ supertest, prisma: p }) => {
+    request = supertest;
+    prisma = p;
   });
 
-  afterAll(async () => {
-    await server.stop();
+  beforeAll(async () => {
+    authHeader = await login(request);
   });
 
   const url = "/api/suggesties";
@@ -59,7 +53,7 @@ describe("Suggesties", () => {
     });
 
     it("should 200 and return all suggesties", async () => {
-      const response = await request.get(url);
+      const response = await request.get(url).set("Authorization", authHeader);
       expect(response.status).toBe(200);
       expect(response.body.items.length).toBe(3);
       const suggestie1 = {
@@ -84,6 +78,7 @@ describe("Suggesties", () => {
       expect(response.body.items).toContainEqual(suggestie2);
       expect(response.body.items).toContainEqual(suggestie3);
     });
+    testAuthHeader(() => request.get(url));
   });
   describe("GET /api/suggesties?maand=${maand}&vegie={vegie}", () => {
     beforeAll(async () => {
@@ -101,11 +96,26 @@ describe("Suggesties", () => {
     });
 
     it("should 200 and return correcte suggestie omschrijving", async () => {
-      const response = await request.get(`${url}?maand=12&vegie=true`);
+      const response = await request
+        .get(`${url}?maand=12&vegie=true`)
+        .set("Authorization", authHeader);
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
         omschrijving: "test vegie suggestie omschrijving december",
       });
     });
+    it("should 400 and return message (foute maand)", async () => {
+      const response = await request
+        .get(`${url}?maand=13&vegie=true`)
+        .set("Authorization", authHeader);
+      expect(response.status).toBe(400);
+
+      expect(response.body.message).toBe(
+        "Validation failed, check details for more information"
+      );
+      expect(response.body.code).toBe("VALIDATION_FAILED");
+    });
+
+    testAuthHeader(() => request.get(url));
   });
 });

@@ -11,9 +11,14 @@ const findByMaandEnVegie = async (maand, vegie) => {
   const suggestie = await prisma.suggestieVanDeMaand.findFirst({
     where: { maand, vegie },
   });
-  if(suggestie === null) {
-    throw new Error(`Geen suggestie gevonden voor maand ${maand} en vegie ${vegie}`);
+  if (suggestie === null) {
+    const error = new Error();
+    error.code = 404;
+    error.code = "NOT_FOUND";
+    error.message = `GGeen suggestie gevonden voor maand ${maand} en vegie ${vegie}`;
+    error.details = { bestellingsnr };
+    throw error;
   }
-  return {  omschrijving: suggestie.omschrijving  };
+  return { omschrijving: suggestie.omschrijving };
 };
 module.exports = { findAll, findByMaandEnVegie };

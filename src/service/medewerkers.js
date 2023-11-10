@@ -4,7 +4,6 @@ const handleDBError = require("./_handleDBError");
 const { hashPassword, verifyPassword } = require("../core/password");
 const Role = require("../core/rollen");
 const { generateJWT, verifyJWT } = require("../core/jwt");
-const config = require("config");
 const { getLogger } = require("../core/logging");
 
 /**

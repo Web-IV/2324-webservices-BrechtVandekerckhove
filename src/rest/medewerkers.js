@@ -83,14 +83,14 @@ login.validationScheme = {
  * Check if the signed in user can access the given user's information.
  */
 const checkMedewerkerId = (ctx, next) => {
-  const { userId: medewerkerId, roles: rollen } = ctx.state.session;
+  const { medewerkerId, rollen } = ctx.state.session;
   const { id } = ctx.params;
 
   // You can only get our own data unless you're an admin
   if (id !== medewerkerId && !rollen.includes(Role.ADMIN)) {
     return ctx.throw(
       403,
-      "Je bent niet gemachtigd om de gegevens van deze gebruiker te bekijken",
+      "Je bent niet gemachtigd om de gegevens van deze gebruiker te bekijken.",
       {
         code: "FORBIDDEN",
       }

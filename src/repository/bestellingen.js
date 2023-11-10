@@ -52,6 +52,7 @@ const findByBestellingsnr = async (bestellingsnr) => {
     });
     if (!bestelling) {
       const error = new Error();
+      error.code = 404;
       error.code = "NOT_FOUND";
       error.message = `Geen bestelling gevonden met bestellingsnr ${bestellingsnr}`;
       error.details = { bestellingsnr };
@@ -135,6 +136,7 @@ const create = async (bestelling) => {
           });
           if (leverplaatsRecord === null) {
             const error = new Error();
+            error.status = 404;
             error.code = "NOT_FOUND";
             error.message = `Leverplaats ${leverplaats} is niet gekend.`;
             error.details = { leverplaats };

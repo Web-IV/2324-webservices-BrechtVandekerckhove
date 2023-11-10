@@ -2,16 +2,20 @@ const prisma = require("../data/prisma");
 const { getLogger } = require("../core/logging");
 
 const findAll = async () => {
-  const medewerkers = await prisma.medewerker.findMany();
+  const medewerkers = await prisma.medewerker.findMany({
+    include: { dienst: true },
+  });
   return medewerkers;
 };
 
 const findById = async (id) => {
   const medewerker = await prisma.medewerker.findUnique({
     where: { id: id },
+    include: { dienst: true },
   });
   if (!medewerker) {
     const error = new Error();
+    error.status = 404;
     error.code = "NOT_FOUND";
     error.message = `Geen medewerker gevonden met id ${id}`;
     error.details = { id };
@@ -82,6 +86,7 @@ const deleteById = async (id) => {
 const findByEmail = async (email) => {
   const medewerker = await prisma.medewerker.findUnique({
     where: { email: email },
+    include: { dienst: true },
   });
 
   return medewerker;
@@ -92,6 +97,7 @@ const dienstOmzettenNaarId = async (dienst) => {
   });
   if (dienstRecord === null) {
     const error = new Error();
+    error.status = 404;
     error.code = "NOT_FOUND";
     error.message = `Dienst ${dienst} is niet gekend.`;
     error.details = { dienst };
@@ -106,5 +112,5 @@ module.exports = {
   create,
   updateById,
   deleteById,
-  findByEmail, 
+  findByEmail,
 };

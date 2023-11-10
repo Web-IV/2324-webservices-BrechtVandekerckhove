@@ -1,5 +1,5 @@
 const jestDate = require("jest-date-mock");
-const { withServer, login } = require("./supertest.setup");
+const { withServer, login, loginAdmin } = require("./supertest.setup");
 const { testAuthHeader } = require("./common/auth");
 
 const testDataSuggestieVanDeMaand = [
@@ -76,9 +76,10 @@ const dataToDelete = {
   diensten: [100, 101],
   suggestieVanDeMaand: [100, 101],
 };
-
+const url = "/api/bestellingen";
 describe("Bestellingen", () => {
   let prisma, request, authHeader;
+
   withServer(({ supertest, prisma: p }) => {
     request = supertest;
     prisma = p;
@@ -89,7 +90,7 @@ describe("Bestellingen", () => {
   });
 
   const url = "/api/bestellingen";
-
+  
   describe("GET /api/bestellingen", () => {
     beforeAll(async () => {
       await prisma.suggestieVanDeMaand.createMany({
@@ -98,6 +99,11 @@ describe("Bestellingen", () => {
       const { id: testUserId } = await prisma.medewerker.findFirst({
         where: {
           email: "test.user@hogent.be",
+        },
+      });
+      const { id: adminUserId } = await prisma.medewerker.findFirst({
+        where: {
+          email: "admin.user@hogent.be",
         },
       });
       await prisma.bestelling.create({
@@ -110,7 +116,7 @@ describe("Bestellingen", () => {
         include: {
           maaltijden: true,
         },
-        data: { ...testdataBestellingen[1], medewerkerId: testUserId },
+        data: { ...testdataBestellingen[1], medewerkerId: adminUserId },
       });
     });
 
@@ -126,13 +132,87 @@ describe("Bestellingen", () => {
           id: { in: dataToDelete.suggestieVanDeMaand },
         },
       });
+      // admin -> user terugzetten
+      authHeader = await login(request);
     });
 
-    it("should 200 and return all bestellingen", async () => {
+    it("should 200 and return all bestellingen from medewerker", async () => {
+      const response = await request.get(url).set("Authorization", authHeader);
+      expect(response.status).toBe(200);
+      expect(response.body.items.length).toBe(1);
+
+      expect(response.body.items[0]).toEqual({
+        bestellingsnr: 100,
+        besteldatum: "2023-12-05T00:00:00.000Z",
+        //work around
+        medewerkerId: expect.anything(),
+        medewerker: {
+          id: expect.anything(),
+          naam: "Test",
+          voornaam: "User",
+          email: "test.user@hogent.be",
+          rollen: '["user"]',
+          dienstId: 100,
+          dienst: {
+            id: 100,
+            naam: "DIENST 1",
+          },
+        },
+        maaltijden: [
+          {
+            id: expect.anything(),
+            type: "warmeMaaltijd",
+            leverdatum: "2023-12-09T00:00:00.000Z",
+            hoofdschotel: "suggestie",
+            soep: "geen soep",
+            dessert: "fruit",
+            typeSandwiches: null,
+            hartigBeleg: null,
+            zoetBeleg: null,
+            vetstof: null,
+            leverplaatsId: 101,
+            bestellingsnr: 100,
+            suggestieVanDeMaandId: 100,
+            suggestieVanDeMaand: {
+              id: 100,
+              maand: 12,
+              vegie: false,
+              omschrijving: "test suggestie omschrijving december",
+            },
+            leverplaats: {
+              id: 101,
+              naam: "DIENST 2",
+            },
+          },
+          {
+            id: expect.anything(),
+            type: "warmeMaaltijd",
+            leverdatum: "2023-12-06T00:00:00.000Z",
+            hoofdschotel: "lasagne",
+            soep: "dagsoep",
+            dessert: "zuivel",
+            typeSandwiches: null,
+            hartigBeleg: null,
+            zoetBeleg: null,
+            vetstof: null,
+            leverplaatsId: 100,
+            bestellingsnr: 100,
+            suggestieVanDeMaandId: null,
+            suggestieVanDeMaand: null,
+            leverplaats: {
+              id: 100,
+              naam: "DIENST 1",
+            },
+          },
+        ],
+      });
+    });
+
+    it("should 200 and return all bestellingen (admin)", async () => {
+      authHeader = await loginAdmin(request);
       const response = await request.get(url).set("Authorization", authHeader);
       expect(response.status).toBe(200);
       expect(response.body.items.length).toBe(2);
-
       expect(response.body.items[0]).toEqual({
         bestellingsnr: 100,
         besteldatum: "2023-12-05T00:00:00.000Z",
@@ -213,11 +293,16 @@ describe("Bestellingen", () => {
           email: "test.user@hogent.be",
         },
       });
+      const { id: testAdminId } = await prisma.medewerker.findFirst({
+        where: {
+          email: "admin.user@hogent.be",
+        },
+      });
       await prisma.bestelling.create({
         include: {
           maaltijden: true,
         },
-        data: { ...testdataBestellingen[0], medewerkerId: testUserId },
+        data: { ...testdataBestellingen[0], medewerkerId: testAdminId },
       });
       await prisma.bestelling.create({
         include: {
@@ -238,9 +323,11 @@ describe("Bestellingen", () => {
           id: { in: dataToDelete.suggestieVanDeMaand },
         },
       });
+      // admin -> user terugzetten
+      authHeader = await login(request);
     });
 
-    it("should 200 and return the requested bestelling", async () => {
+    it("should 200 and return the requested bestelling from medewerker", async () => {
       const response = await request
         .get(`${url}/101`)
         .set("Authorization", authHeader);
@@ -287,6 +374,67 @@ describe("Bestellingen", () => {
         ],
       });
     });
+
+    it("should 403 and return message (unauthorized request)", async () => {
+      const response = await request
+        .get(`${url}/100`)
+        .set("Authorization", authHeader);
+
+      expect(response.statusCode).toBe(403);
+      expect(response.body.message).toBe(
+        "Je bent niet gemachtigd om deze actie uit te voeren"
+      );
+      expect(response.body.code).toBe("FORBIDDEN");
+    });
+    it("should 200 and return the requested medewerker bestelling (admin)", async () => {
+      authHeader = await loginAdmin(request);
+      const response = await request
+        .get(`${url}/101`)
+        .set("Authorization", authHeader);
+
+      expect(response.statusCode).toBe(200);
+      expect(response.body).toEqual({
+        bestellingsnr: 101,
+        besteldatum: "2023-12-07T00:00:00.000Z",
+        //work around
+        medewerkerId: expect.anything(),
+        medewerker: {
+          id: expect.anything(),
+          naam: "Test",
+          voornaam: "User",
+          email: "test.user@hogent.be",
+          rollen: '["user"]',
+          dienstId: 100,
+          dienst: {
+            id: 100,
+            naam: "DIENST 1",
+          },
+        },
+        maaltijden: [
+          {
+            id: expect.anything(),
+            type: "broodMaaltijd",
+            leverdatum: "2023-12-12T00:00:00.000Z",
+            hoofdschotel: null,
+            soep: "dagsoep",
+            dessert: "zuivel",
+            typeSandwiches: "wit",
+            hartigBeleg: "salami",
+            zoetBeleg: "confituur",
+            vetstof: "vetstof",
+            leverplaatsId: 100,
+            bestellingsnr: 101,
+            suggestieVanDeMaandId: null,
+            suggestieVanDeMaand: null,
+            leverplaats: {
+              id: 100,
+              naam: "DIENST 1",
+            },
+          },
+        ],
+      });
+    });
+
     testAuthHeader(() => request.get(url));
   });
 
@@ -402,6 +550,11 @@ describe("Bestellingen", () => {
           email: "test.user@hogent.be",
         },
       });
+      const { id: testAdminId } = await prisma.medewerker.findFirst({
+        where: {
+          email: "admin.user@hogent.be",
+        },
+      });
       await prisma.bestelling.create({
         include: {
           maaltijden: true,
@@ -412,14 +565,14 @@ describe("Bestellingen", () => {
         include: {
           maaltijden: true,
         },
-        data: { ...testdataBestellingen[1], medewerkerId: testUserId },
+        data: { ...testdataBestellingen[1], medewerkerId: testAdminId },
       });
     });
 
     afterAll(async () => {
-      await prisma.bestelling.delete({
+      await prisma.bestelling.deleteMany({
         where: {
-          bestellingsnr: 101,
+          bestellingsnr: { in: dataToDelete.bestellingen },
         },
       });
 
@@ -436,6 +589,18 @@ describe("Bestellingen", () => {
         .set("Authorization", authHeader);
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
+    });
+
+    it("should 403 and return message (unauthorized request)", async () => {
+      const response = await request
+        .delete(`${url}/101`)
+        .set("Authorization", authHeader);
+
+      expect(response.statusCode).toBe(403);
+      expect(response.body.message).toBe(
+        "Je bent niet gemachtigd om deze actie uit te voeren"
+      );
+      expect(response.body.code).toBe("FORBIDDEN");
     });
     testAuthHeader(() => request.get(url));
   });
