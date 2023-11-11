@@ -90,7 +90,7 @@ describe("Bestellingen", () => {
   });
 
   const url = "/api/bestellingen";
-  
+
   describe("GET /api/bestellingen", () => {
     beforeAll(async () => {
       await prisma.suggestieVanDeMaand.createMany({
@@ -616,6 +616,11 @@ describe("Bestellingen", () => {
           email: "test.user@hogent.be",
         },
       });
+      const { id: testAdminId } = await prisma.medewerker.findFirst({
+        where: {
+          email: "admin.user@hogent.be",
+        },
+      });
       await prisma.bestelling.create({
         include: {
           maaltijden: true,
@@ -626,7 +631,7 @@ describe("Bestellingen", () => {
         include: {
           maaltijden: true,
         },
-        data: { ...testdataBestellingen[1], medewerkerId: testUserId },
+        data: { ...testdataBestellingen[1], medewerkerId: testAdminId },
       });
     });
 
@@ -642,9 +647,24 @@ describe("Bestellingen", () => {
           id: { in: dataToDelete.suggestieVanDeMaand },
         },
       });
+      authHeader = await login(request);
     });
 
-    it("should 200 and return all leverdata", async () => {
+    it("should 200 and return all leverdata of medewerker", async () => {
+      const response = await request
+        .get(`${url}/leverdata`)
+        .set("Authorization", authHeader);
+      expect(response.status).toBe(200);
+      expect(response.body.items.length).toBe(2);
+      expect(response.body.items).toContain(
+        new Date("2023-12-06").toISOString()
+      );
+      expect(response.body.items).toContain(
+        new Date("2023-12-09").toISOString()
+      );
+    });
+    it("should 200 and return all leverdata (as admin)", async () => {
+      authHeader = await loginAdmin(request);
       const response = await request
         .get(`${url}/leverdata`)
         .set("Authorization", authHeader);

@@ -35,9 +35,9 @@ const create = async (bestelling) => {
     throw handleDBError(error);
   }
 };
-
-const getLeverdata = async () => {
-  const bestellingen = await getAll();
+//medewerkersId optioneel, indien niet meegegeven worden de leverdata van alle bestellingen opgehaald
+const getLeverdata = async (medewerkerId) => {
+  const bestellingen = await getAll(medewerkerId);
   const leverdata = bestellingen.items.reduce((acc, bestelling) => {
     bestelling.maaltijden.forEach((maaltijd) => {
       acc.push(maaltijd.leverdatum);

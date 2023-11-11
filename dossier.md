@@ -54,44 +54,54 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 ### Bestelling
 
 - Een gebruiker moet al zijn bestellingen kunnen bekijken:  
-  `GET /api/bestellingen` (gebruikersId zit in de token)
+  `GET /api/bestellingen` 
 
 - Een gebruiker moet zijn bestelling in detail kunnen bekijken:  
-  `GET /api/bestellingen/:bestellingsnr` (gebruikersId zit in de token)
+  `GET /api/bestellingen/:bestellingsnr` 
 
 - Alle leverdata van alle bestellingen moeten opgevraagd kunnen worden zodat een nieuwe maaltijd niet op eenzelfde leverdatum geplaatst wordt:  
 `GET /api/bestellingen/leverdata`
 
 - Een gebruiker moet een winkelmandje kunnen bevestigen, bestelling dus plaatsen:  
-  `POST /api/bestellingen` (gebruikersId zit in de token)
+  `POST /api/bestellingen` 
 
 - Een gebruiker moet een bestelling kunnen verwijderen:  
-  `DELETE /api/bestellingen/:bestellingsnr` (gebruikersId zit in de token)
+  `DELETE /api/bestellingen/:bestellingsnr` 
 
-- Een admin gebruiker moet alle bestellingen van de gebruikers kunnen bekijken:  
-  `GET /api/bestellingen/`
 
 ### SuggestieVanDeMaand
 - De suggesties moeten opgevraagd kunnen worden:  
 `GET /api/suggesties` 
 
-- De omschrijving van een bepaalde (vegetarische) suggestie van bepaalde maand kan worden opgevraagd:  
+
+- De omschrijving van een bepaalde (vegetarische) suggestie van bepaalde maand kan worden opgevraagd (wordt niet gebruikt in de front-end app):  
 `GET /api/suggesties?maand=${maand}&vegie={vegie}`
 
 ### Dienst
 - De diensten kunnen worden opgevraagd:  
 `GET /api/diensten`  
 
-### Maaltijd (momenteel via localstorage, later schrappen?)
+### Medewerker 
 
-- Een gebruiker moet een maaltijd kunnen aanmaken:  
-  `POST /api/maaltijd` (gebruikersId zit in de token)
+- Een gebruiker kan zich registreren:  
+  `POST /api/medewerkers/register`   
 
-- Een gebruiker moet een maaltijd kunnen toevoegen aan winkelmandje:  
-  `POST /api/winkelmandje` (gebruikersId zit in de token)
+- Een gebruiker kan inloggen:   
+  `POST /api/medewerkers/login`   
 
-- Een gebruiker moet een maaltijd kunnen verwijderen uit winkelmandje:  
-  `DELETE /api/winkelmandje/:id` (gebruikersId zit in de token)
+- Een admin kan alle medewerkers opvragen:   
+  `GET /api/medewerkers`   
+
+- Een admin kan een medewerker opvragen, een gebruiker zichzelf:   
+  `POST /api/medewerkers/:id`  
+
+- Een admin kan een medewerker aanpassen, een gebruiker zichzelf:   
+  `PUT /api/medewerkers/:id`  
+
+- Een admin kan een medewerker verwijderen, een gebruiker zichzelf:   
+  `DELETE /api/medewerkers/:id`  
+
+
 
 ## Behaalde minimumvereisten
 
@@ -139,40 +149,40 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 
 - **datalaag**
 
-  - [ ] voldoende complex (meer dan één tabel, 2 een-op-veel of veel-op-veel relaties)
-  - [ ] één module beheert de connectie + connectie wordt gesloten bij sluiten server
-  - [ ] heeft migraties - indien van toepassing
-  - [ ] heeft seeds
+  - [x] voldoende complex (meer dan één tabel, 2 een-op-veel of veel-op-veel relaties)
+  - [x] één module beheert de connectie + connectie wordt gesloten bij sluiten server (prisma raadt aan om connectie niet expliciet te sluiten)
+  - [x] heeft migraties - indien van toepassing
+  - [x] heeft seeds
         <br />
 
 - **repositorylaag**
 
-  - [ ] definieert één repository per entiteit (niet voor tussentabellen) - indien van toepassing
-  - [ ] mapt OO-rijke data naar relationele tabellen en vice versa - indien van toepassing
+  - [x] definieert één repository per entiteit (niet voor tussentabellen) - indien van toepassing
+  - [x] mapt OO-rijke data naar relationele tabellen en vice versa - indien van toepassing
         <br />
 
 - **servicelaag met een zekere complexiteit**
 
-  - [ ] bevat alle domeinlogica
-  - [ ] bevat geen SQL-queries of databank-gerelateerde code
+  - [x] bevat alle domeinlogica
+  - [x] bevat geen SQL-queries of databank-gerelateerde code
         <br />
 
 - **REST-laag**
 
-  - [ ] meerdere routes met invoervalidatie
-  - [ ] degelijke foutboodschappen
+  - [x] meerdere routes met invoervalidatie
+  - [x] degelijke foutboodschappen
   - [ ] volgt de conventies van een RESTful API
   - [ ] bevat geen domeinlogica
-  - [ ] geen API calls voor entiteiten die geen zin hebben zonder hun ouder (bvb tussentabellen)
-  - [ ] degelijke authorisatie/authenticatie op alle routes
+  - [x] geen API calls voor entiteiten die geen zin hebben zonder hun ouder (bvb tussentabellen)
+  - [x] degelijke authorisatie/authenticatie op alle routes
         <br />
 
 - **algemeen**
 
-  - [ ] er is een minimum aan logging voorzien
-  - [ ] een aantal niet-triviale integratietesten (min. 1 controller >=80% coverage)
-  - [ ] minstens één extra technologie
-  - [ ] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
+  - [x] er is een minimum aan logging voorzien
+  - [x] een aantal niet-triviale integratietesten (min. 1 controller >=80% coverage)
+  - [x] minstens één extra technologie 
+  - [x] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
   - [ ] duidelijke en volledige README.md
   - [ ] volledig en tijdig ingediend dossier en voldoende commits
 
@@ -184,8 +194,7 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 
 ### Web Services
 
-> Hoe heb je jouw applicatie gestructureerd (mappen, design patterns...)?
-
+Zelfde structuur als de voorbeeldapplicatie, voor ORM prisma een apparte map voorzien.
 ## Extra technologie
 
 ### Front-end Web Development
@@ -194,6 +203,8 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 
 ### Web Services
 
+ORM Prisma: https://www.npmjs.com/package/prisma  
+Het databank ontwerp configureer je via schema.prisma bestand, queries gebeuren via functies( create, findFirst, findUnqiue, delete, update, ...). Migraties zijn ook eenvoudig uit te voeren na aanpassen van schema.prisma via `prisma migrate dev`. Seeden van de database gebeurt via seed.js bestand en commando `prisma db seed` (wordt ook uitgevoerd bij `prisma migrate dev`). 
 > Wat is de extra technologie? Hoe werkt het? Voeg een link naar het npm package toe!
 
 ## Testresultaten
@@ -206,6 +217,40 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 
 > Schrijf hier een korte oplijsting en beschrijving van de geschreven testen + voeg een screenshot van de coverage en uitvoering toe
 
+#### Bestellingen
+- `GET /api/bestellingen`:
+  - als gebruiker: alle bestellingen van de gebruiker
+  - als admin: alle bestellingen
+- `GET /api/bestellingen/:id`:
+  - als gebruiker: bestellingen van gebruiker toegelaten, van andere niet => fout
+  - als admin: bestelling van iedereen toegelaten
+- `POST /api/bestellingen`
+- `DELETE /api/bestellingen/:id`:
+  - als gebruiker: bestellingen van gebruiker toegelaten, van andere niet => fout
+  - als admin: bestelling van iedereen toegelaten
+- `GET /api/bestellingen/leverdata`:
+  - als gebruiker: leverdata van eigen bestelligen 
+  - als admin: leverdata van alle bestellingen
+#### Diensten  
+- `GET /api/diensten`
+#### Suggesties  
+- `GET /api/suggesties`  
+- `GET /api/suggesties?maand=${maand}&vegie={vegie}`:
+  - correcte maand en vegie params
+  - foute maand param => fout
+#### Medewerker  
+- `GET /api/medewerkers`:  
+  - als gebruiker => fout
+  - als admin
+- `GET /api/medewerkers/:id`:
+  - als gebruiker: zichzelf toegelaten, anderen niet => fout
+  - als admin: iedere medewerker toegelaten
+- `PUT /api/medewerkers/:id`:
+  - als gebruiker: zichzelf toegelaten, anderen niet => fout
+  - als admin: iedere medewerker toegelaten
+- `DELETE /api/medewerkers/:id`:
+  - als gebruiker: zichzelf toegelaten, anderen niet => fout
+  - als admin: iedere medewerker toegelaten
 ## Gekende bugs
 
 ### Front-end Web Development

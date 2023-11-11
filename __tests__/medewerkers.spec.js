@@ -33,7 +33,7 @@ describe("Medewerkers", () => {
       expect(response.body.code).toBe("FORBIDDEN");
     });
 
-    it("should 200 and return all medewerkers", async () => {
+    it("should 200 and return all medewerkers (as admin)", async () => {
       authHeader = await loginAdmin(request);
       const response = await request.get(url).set("Authorization", authHeader);
       expect(response.status).toBe(200);

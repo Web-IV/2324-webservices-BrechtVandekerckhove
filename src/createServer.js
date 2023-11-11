@@ -3,6 +3,7 @@ const config = require("config");
 const { initializeLogger, getLogger } = require("./core/logging");
 const installMiddlewares = require("./core/installMiddlewares");
 
+
 const NODE_ENV = config.get("env");
 const LOG_LEVEL = config.get("log.level");
 const LOG_DISABLED = config.get("log.disabled");
@@ -20,6 +21,8 @@ module.exports = async function createServer() {
   
   // installRest aanroepen na de logger initialisatie!!!
   const installRest = require("./rest");
+
+
   const app = new Koa();
 
   installMiddlewares(app);
@@ -32,14 +35,16 @@ module.exports = async function createServer() {
 
     start() {
       return new Promise((resolve) => {
-        app.listen(9000, () => {
-          getLogger().info("🚀 Server listening on http://localhost:9000");
+        const port = config.get('port');
+        app.listen(port, () => {
+          getLogger().info(`🚀 Server listening on http://localhost:${port}`);
           resolve();
         });
       });
     },
     async stop() {
       app.removeAllListeners();
+
       getLogger().info("Goodbye! 👋");
     },
   };

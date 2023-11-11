@@ -22,4 +22,5 @@ module.exports = {
       audience: "brecht.vandekerckhove@student.hogent.be",
     },
   },
+  port: 9000,
 };

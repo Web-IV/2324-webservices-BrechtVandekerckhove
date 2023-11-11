@@ -5,9 +5,9 @@ let prisma;
 
 module.exports = async () => {
   // Create a database connection
-  initializeLogger(config.get("log.level"), config.get("log.disabled"));
+   initializeLogger(config.get("log.level"), config.get("log.disabled"));
   prisma = require("../src/data/prisma");
-  // Insert a test user with password 12345678
+  
 
   const testDataDiensten = [
     { id: 100, naam: "DIENST 1" },
