@@ -1,5 +1,6 @@
-const ServiceError = require("../core/serviceError");
 const Prisma = require("@prisma/client");
+
+const ServiceError = require("../core/serviceError");
 const handleDBError = (error) => {
   const { code, meta, message } = error;
 

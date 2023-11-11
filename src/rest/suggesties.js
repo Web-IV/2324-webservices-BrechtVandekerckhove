@@ -1,6 +1,7 @@
 const Router = require("@koa/router");
-const suggestiesService = require("../service/suggesties");
 const Joi = require("joi");
+
+const suggestiesService = require("../service/suggesties");
 const validate = require("../core/validation");
 const { requireAuthentication } = require("../core/auth");
 

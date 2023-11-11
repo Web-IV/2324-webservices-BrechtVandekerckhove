@@ -1,5 +1,5 @@
 
-const { withServer, login, loginAdmin } = require("./supertest.setup");
+const { withServer, login } = require("./supertest.setup");
 const { testAuthHeader } = require("./common/auth");
 
 

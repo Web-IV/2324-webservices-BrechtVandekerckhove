@@ -1,6 +1,7 @@
 const Router = require("@koa/router");
-const medewerkerService = require("../service/medewerkers");
 const Joi = require("joi");
+
+const medewerkerService = require("../service/medewerkers");
 const validate = require("../core/validation");
 const { requireAuthentication, makeRequireRole } = require("../core/auth");
 const Role = require("../core/rollen");

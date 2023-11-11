@@ -1,4 +1,5 @@
 const suggestieRepository = require("../repository/suggesties");
+
 const handleDBError = require("./_handleDBError");
 
 const getAll = async () => {

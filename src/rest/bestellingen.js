@@ -1,8 +1,9 @@
 const Router = require("@koa/router");
-const bestellingService = require("../service/bestellingen");
 const Joi = require("joi");
+
+const bestellingService = require("../service/bestellingen");
 const validate = require("../core/validation");
-const { requireAuthentication, makeRequireRole } = require("../core/auth");
+const { requireAuthentication } = require("../core/auth");
 const Role = require("../core/rollen");
 
 //ADMIN mag alles zien, USER mag enkel eigen bestellingen zien

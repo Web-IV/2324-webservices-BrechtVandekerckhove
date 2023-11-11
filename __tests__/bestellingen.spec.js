@@ -1,4 +1,5 @@
 const jestDate = require("jest-date-mock");
+
 const { withServer, login, loginAdmin } = require("./supertest.setup");
 const { testAuthHeader } = require("./common/auth");
 
@@ -76,7 +77,7 @@ const dataToDelete = {
   diensten: [100, 101],
   suggestieVanDeMaand: [100, 101],
 };
-const url = "/api/bestellingen";
+
 describe("Bestellingen", () => {
   let prisma, request, authHeader;
 

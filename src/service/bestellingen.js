@@ -1,5 +1,6 @@
 const bestellingenRepository = require("../repository/bestellingen");
-const ServiceError = require("../core/serviceError");
+
+
 const handleDBError = require("./_handleDBError");
 
 //medewerkersId optioneel, indien niet meegegeven worden alle bestellingen opgehaald
@@ -19,7 +20,7 @@ const getByBestellingsnr = async (bestellingsnr) => {
 };
 const deleteByBestellingsnr = async (bestellingsnr) => {
   try {
-    const deleted = await bestellingenRepository.deleteByBestellingsnr(
+    await bestellingenRepository.deleteByBestellingsnr(
       bestellingsnr
     );
   } catch (error) {

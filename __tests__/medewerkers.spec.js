@@ -1,6 +1,7 @@
+const Role = require("../src/core/rollen");
+
 const { withServer, login, loginAdmin } = require("./supertest.setup");
 const { testAuthHeader } = require("./common/auth");
-const Role = require("../src/core/rollen");
 
 describe("Medewerkers", () => {
   let prisma, request, authHeader;

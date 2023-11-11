@@ -1,5 +1,6 @@
-const packageJson = require('../../package.json');
 const config = require("config");
+
+const packageJson = require('../../package.json');
 
 /**
  * Check if the server is healthy. Can be extended

@@ -1,5 +1,6 @@
 const Koa = require("koa");
 const config = require("config");
+
 const { initializeLogger, getLogger } = require("./core/logging");
 const installMiddlewares = require("./core/installMiddlewares");
 

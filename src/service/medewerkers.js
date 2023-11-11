@@ -1,10 +1,11 @@
 const medewerkerRepository = require("../repository/medewerkers");
 const ServiceError = require("../core/serviceError");
-const handleDBError = require("./_handleDBError");
 const { hashPassword, verifyPassword } = require("../core/password");
 const Role = require("../core/rollen");
 const { generateJWT, verifyJWT } = require("../core/jwt");
 const { getLogger } = require("../core/logging");
+
+const handleDBError = require("./_handleDBError");
 
 /**
  * Get all medewerkers.
@@ -97,7 +98,7 @@ const updateById = async (
  */
 const deleteById = async (id) => {
   try {
-    const deleted = await medewerkerRepository.deleteById(id);
+ await medewerkerRepository.deleteById(id);
   } catch (error) {
     throw handleDBError(error);
   }

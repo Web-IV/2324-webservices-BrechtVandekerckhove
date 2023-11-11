@@ -16,7 +16,7 @@ const findByMaandEnVegie = async (maand, vegie) => {
     error.code = 404;
     error.code = "NOT_FOUND";
     error.message = `GGeen suggestie gevonden voor maand ${maand} en vegie ${vegie}`;
-    error.details = { bestellingsnr };
+    error.details = { maand, vegie };
     throw error;
   }
   return { omschrijving: suggestie.omschrijving };
