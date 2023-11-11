@@ -204,7 +204,7 @@ Zelfde structuur als de voorbeeldapplicatie, voor ORM prisma een apparte map voo
 ### Web Services
 
 ORM Prisma: https://www.npmjs.com/package/prisma  
-Het databank ontwerp configureer je via schema.prisma bestand, queries gebeuren via functies( create, findFirst, findUnqiue, delete, update, ...). Migraties zijn ook eenvoudig uit te voeren na aanpassen van schema.prisma via `prisma migrate dev`. Seeden van de database gebeurt via seed.js bestand en commando `prisma db seed` (wordt ook uitgevoerd bij `prisma migrate dev`). 
+Het databank ontwerp configureer je via een schema.prisma bestand, queries gebeuren via functies( create, findFirst, findUnqiue, delete, update, ...). Migraties zijn ook eenvoudig uit te voeren na aanpassen van schema.prisma via `yarn prisma migrate dev`. Seeden van de database gebeurt via het seed.js bestand en kan via commando `yarn prisma db seed` uitgevoerd worden (wordt ook uitgevoerd bij ` yarnprisma migrate dev`).
 > Wat is de extra technologie? Hoe werkt het? Voeg een link naar het npm package toe!
 
 ## Testresultaten

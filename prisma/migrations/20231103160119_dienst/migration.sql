@@ -16,7 +16,7 @@ ALTER TABLE `medewerker` DROP COLUMN `dienst`,
     ADD COLUMN `dienstId` INTEGER NOT NULL;
 
 -- CreateTable
-CREATE TABLE `Dienst` (
+CREATE TABLE `dienst` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `naam` VARCHAR(191) NOT NULL,
 
@@ -24,7 +24,7 @@ CREATE TABLE `Dienst` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Medewerker` ADD CONSTRAINT `Medewerker_dienstId_fkey` FOREIGN KEY (`dienstId`) REFERENCES `Dienst`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `medewerker` ADD CONSTRAINT `Medewerker_dienstId_fkey` FOREIGN KEY (`dienstId`) REFERENCES `dienst`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Maaltijd` ADD CONSTRAINT `Maaltijd_leverplaatsId_fkey` FOREIGN KEY (`leverplaatsId`) REFERENCES `Dienst`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `maaltijd` ADD CONSTRAINT `Maaltijd_leverplaatsId_fkey` FOREIGN KEY (`leverplaatsId`) REFERENCES `dienst`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

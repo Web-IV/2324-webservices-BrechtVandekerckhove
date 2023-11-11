@@ -1,7 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const { getLogger } = require("../core/logging");
-
-
+const config = require("config");
 
 const logger = getLogger();
 logger.info("Connecting to database...");
@@ -15,7 +14,6 @@ try {
   throw new Error("Could not initialize the data layer"); //
 }
 logger.info("Successfully initialized connection to the database");
-
 
 module.exports = prisma;
 

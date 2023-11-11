@@ -13,4 +13,4 @@ ALTER TABLE `medewerker` ADD COLUMN `email` VARCHAR(191) NOT NULL,
     ADD COLUMN `wachtwoord_hash` VARCHAR(191) NOT NULL;
 
 -- CreateIndex
-CREATE UNIQUE INDEX `Medewerker_email_key` ON `Medewerker`(`email`);
+CREATE UNIQUE INDEX `Medewerker_email_key` ON `medewerker`(`email`);
