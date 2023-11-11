@@ -8,9 +8,9 @@
 
 */
 -- AlterTable
-ALTER TABLE `medewerker` ADD COLUMN `email` VARCHAR(191) NOT NULL,
+ALTER TABLE `Medewerker` ADD COLUMN `email` VARCHAR(191) NOT NULL,
     ADD COLUMN `rollen` JSON NOT NULL,
     ADD COLUMN `wachtwoord_hash` VARCHAR(191) NOT NULL;
 
 -- CreateIndex
-CREATE UNIQUE INDEX `Medewerker_email_key` ON `medewerker`(`email`);
+CREATE UNIQUE INDEX `Medewerker_email_key` ON `Medewerker`(`email`);

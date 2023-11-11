@@ -5,4 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE `maaltijd` ADD COLUMN `leverplaats` VARCHAR(191) NOT NULL;
+ALTER TABLE `Maaltijd` ADD COLUMN `leverplaats` VARCHAR(191) NOT NULL;

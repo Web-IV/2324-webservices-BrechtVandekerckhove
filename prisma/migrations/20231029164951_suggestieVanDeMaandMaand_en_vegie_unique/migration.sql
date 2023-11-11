@@ -5,4 +5,4 @@
 
 */
 -- CreateIndex
-CREATE UNIQUE INDEX `SuggestieVanDeMaand_maand_vegie_key` ON `suggestieVanDeMaand`(`maand`, `vegie`);
+CREATE UNIQUE INDEX `SuggestieVanDeMaand_maand_vegie_key` ON `SuggestieVanDeMaand`(`maand`, `vegie`);
