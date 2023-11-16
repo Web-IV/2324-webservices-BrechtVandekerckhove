@@ -4,7 +4,7 @@ module.exports = {
     disabled: false,
   },
   cors: {
-    origins: ["http://localhost:5173"], //URL van de frontend
+    origins: ["https://web-iv-2324-frontendweb.onrender.com"], //URL van de frontend
     maxAge: 3 * 60 * 60,
   },
   auth: {

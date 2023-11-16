@@ -380,40 +380,4 @@ describe("Medewerkers", () => {
     testAuthHeader(() => request.get(url));
   });
 
-  //register testen, hoe?? nu code 405
-  /*
-  describe("POST /api/medewerkers/register", () => {
-    beforeAll(async () => {
-      // niks
-    });
-
-    afterAll(async () => {
-      authHeader = await login(request);
-    });
-
-    it("should 200 and return created medewerker", async () => {
-  
-      const response = await request.post(url).send({
-        naam: "NieuweTest",
-        voornaam: "NieuweUser",
-        email: "testtest@hogent.be",
-        wachtwoord: "12345678910",
-        dienst: "DIENST 1",
-      });
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toEqual({
-        token: expect.anything(),
-        medewerker: {
-          naam: "NieuweTest",
-          voornaam: "NieuweUser",
-          email: "testtest@hogent.be",
-          dienstId: 100,
-          dienst: {
-            id: 100,
-            naam: "DIENST 1",
-          },
-        },
-      });
-    });
-  });*/
 });
