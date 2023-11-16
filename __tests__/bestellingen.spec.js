@@ -23,12 +23,12 @@ const testDataSuggestieVanDeMaand = [
 const testdataBestellingen = [
   {
     bestellingsnr: 100,
-    besteldatum: new Date("2023-12-05"),
+    besteldatum: new Date("2023-11-05"),
     maaltijden: {
       create: [
         {
           type: "warmeMaaltijd",
-          leverdatum: new Date("2023-12-06"),
+          leverdatum: new Date("2024-12-06"),
           leverplaats: { connect: { naam: "DIENST 1" } },
           hoofdschotel: "lasagne",
           soep: true,
@@ -36,7 +36,7 @@ const testdataBestellingen = [
         },
         {
           type: "warmeMaaltijd",
-          leverdatum: new Date("2023-12-09"),
+          leverdatum: new Date("2024-12-09"),
           leverplaats: { connect: { naam: "DIENST 2" } },
           hoofdschotel: "suggestie",
           soep: false,
@@ -59,7 +59,24 @@ const testdataBestellingen = [
     maaltijden: {
       create: {
         type: "broodMaaltijd",
-        leverdatum: new Date("2023-12-12"),
+        leverdatum: new Date("2023-11-12"),
+        leverplaats: { connect: { naam: "DIENST 1" } },
+        typeSandwiches: "wit",
+        soep: true,
+        dessert: "zuivel",
+        hartigBeleg: "salami",
+        zoetBeleg: "confituur",
+        vetstof: true,
+      },
+    },
+  },
+  {
+    bestellingsnr: 102,
+    besteldatum: new Date("2023-12-07"),
+    maaltijden: {
+      create: {
+        type: "broodMaaltijd",
+        leverdatum: new Date("2024-11-12"),
         leverplaats: { connect: { naam: "DIENST 1" } },
         typeSandwiches: "wit",
         soep: true,
@@ -73,7 +90,7 @@ const testdataBestellingen = [
 ];
 
 const dataToDelete = {
-  bestellingen: [100, 101],
+  bestellingen: [100, 101,102],
   diensten: [100, 101],
   suggestieVanDeMaand: [100, 101],
 };
@@ -144,7 +161,7 @@ describe("Bestellingen", () => {
 
       expect(response.body.items[0]).toEqual({
         bestellingsnr: 100,
-        besteldatum: "2023-12-05T00:00:00.000Z",
+        besteldatum: "2023-11-05T00:00:00.000Z",
         //work around
         medewerkerId: expect.anything(),
         medewerker: {
@@ -163,7 +180,7 @@ describe("Bestellingen", () => {
           {
             id: expect.anything(),
             type: "warmeMaaltijd",
-            leverdatum: "2023-12-09T00:00:00.000Z",
+            leverdatum: "2024-12-09T00:00:00.000Z",
             hoofdschotel: "suggestie",
             soep: "geen soep",
             dessert: "fruit",
@@ -188,7 +205,7 @@ describe("Bestellingen", () => {
           {
             id: expect.anything(),
             type: "warmeMaaltijd",
-            leverdatum: "2023-12-06T00:00:00.000Z",
+            leverdatum: "2024-12-06T00:00:00.000Z",
             hoofdschotel: "lasagne",
             soep: "dagsoep",
             dessert: "zuivel",
@@ -216,7 +233,7 @@ describe("Bestellingen", () => {
       expect(response.body.items.length).toBe(2);
       expect(response.body.items[0]).toEqual({
         bestellingsnr: 100,
-        besteldatum: "2023-12-05T00:00:00.000Z",
+        besteldatum: "2023-11-05T00:00:00.000Z",
         //work around
         medewerkerId: expect.anything(),
         medewerker: {
@@ -235,7 +252,7 @@ describe("Bestellingen", () => {
           {
             id: expect.anything(),
             type: "warmeMaaltijd",
-            leverdatum: "2023-12-09T00:00:00.000Z",
+            leverdatum: "2024-12-09T00:00:00.000Z",
             hoofdschotel: "suggestie",
             soep: "geen soep",
             dessert: "fruit",
@@ -260,7 +277,7 @@ describe("Bestellingen", () => {
           {
             id: expect.anything(),
             type: "warmeMaaltijd",
-            leverdatum: "2023-12-06T00:00:00.000Z",
+            leverdatum: "2024-12-06T00:00:00.000Z",
             hoofdschotel: "lasagne",
             soep: "dagsoep",
             dessert: "zuivel",
@@ -355,7 +372,7 @@ describe("Bestellingen", () => {
           {
             id: expect.anything(),
             type: "broodMaaltijd",
-            leverdatum: "2023-12-12T00:00:00.000Z",
+            leverdatum: "2023-11-12T00:00:00.000Z",
             hoofdschotel: null,
             soep: "dagsoep",
             dessert: "zuivel",
@@ -415,7 +432,7 @@ describe("Bestellingen", () => {
           {
             id: expect.anything(),
             type: "broodMaaltijd",
-            leverdatum: "2023-12-12T00:00:00.000Z",
+            leverdatum: "2023-11-12T00:00:00.000Z",
             hoofdschotel: null,
             soep: "dagsoep",
             dessert: "zuivel",
@@ -567,6 +584,11 @@ describe("Bestellingen", () => {
           maaltijden: true,
         },
         data: { ...testdataBestellingen[1], medewerkerId: testAdminId },
+      });  await prisma.bestelling.create({
+        include: {
+          maaltijden: true,
+        },
+        data: { ...testdataBestellingen[2], medewerkerId: testAdminId },
       });
     });
 
@@ -590,13 +612,25 @@ describe("Bestellingen", () => {
         .set("Authorization", authHeader);
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
+   
     });
 
-    it("should 403 and return message (unauthorized request)", async () => {
+    it("should 403 and return message (bestelling met maaltijd in verleden", async () => {
+      authHeader = await loginAdmin(request);
       const response = await request
         .delete(`${url}/101`)
         .set("Authorization", authHeader);
-
+        expect(response.statusCode).toBe(403);
+        expect(response.body.code).toBe("FORBIDDEN");
+        expect(response.body.message).toBe(
+          "Kan bestelling met bestellingsnr 101 niet verwijderen, omdat er minstens 1 maaltijd in het verleden ligt."
+        );
+    });
+    it("should 403 and return message (unauthorized request)", async () => {
+      authHeader = await login(request);
+      const response = await request
+        .delete(`${url}/102`)
+        .set("Authorization", authHeader);
       expect(response.statusCode).toBe(403);
       expect(response.body.message).toBe(
         "Je bent niet gemachtigd om deze actie uit te voeren"
@@ -658,27 +692,21 @@ describe("Bestellingen", () => {
       expect(response.status).toBe(200);
       expect(response.body.items.length).toBe(2);
       expect(response.body.items).toContain(
-        new Date("2023-12-06").toISOString()
+        new Date("2024-12-06").toISOString()
       );
       expect(response.body.items).toContain(
-        new Date("2023-12-09").toISOString()
+        new Date("2024-12-09").toISOString()
       );
     });
-    it("should 200 and return all leverdata (as admin)", async () => {
+    it("should 200 and return all leverdata of admin(as admin)", async () => {
       authHeader = await loginAdmin(request);
       const response = await request
         .get(`${url}/leverdata`)
         .set("Authorization", authHeader);
       expect(response.status).toBe(200);
-      expect(response.body.items.length).toBe(3);
+      expect(response.body.items.length).toBe(1);
       expect(response.body.items).toContain(
-        new Date("2023-12-06").toISOString()
-      );
-      expect(response.body.items).toContain(
-        new Date("2023-12-09").toISOString()
-      );
-      expect(response.body.items).toContain(
-        new Date("2023-12-12").toISOString()
+        new Date("2023-11-12").toISOString()
       );
     });
     testAuthHeader(() => request.get(url));

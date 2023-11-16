@@ -84,12 +84,8 @@ deleteBestelling.validationScheme = {
 };
 
 const getLeverdataBestellingen = async (ctx) => {
-  const { medewerkerId, rollen } = ctx.state.session;
-  if (rollen.includes(Role.ADMIN)) {
-    ctx.body = await bestellingService.getLeverdata();
-  } else {
-    ctx.body = await bestellingService.getLeverdata(medewerkerId);
-  }
+  const { medewerkerId } = ctx.state.session;
+  ctx.body = await bestellingService.getLeverdata(medewerkerId);
 };
 getLeverdataBestellingen.validationScheme = null;
 

@@ -43,7 +43,6 @@ Pas username, password, localhost en poortnummer aan jouw lokale instellingen.
 NODE_ENV=test  
 ```  
 - Installeer alle dependencies: `yarn`
-- Seed de database: `yarn prisma db seed`  
 - Start de development server: `yarn test`
 - Coverage nakijken: `yarn test:coverage`
 

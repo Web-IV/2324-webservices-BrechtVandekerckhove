@@ -96,6 +96,22 @@ const makeExposedMedewerker = (medewerker) => {
 };
 
 const deleteByBestellingsnr = async (bestellingsnr) => {
+  //controle of alle maaltijden in de toekomst liggen
+  const bestelling = await prisma.bestelling.findUnique({
+    where: { bestellingsnr: bestellingsnr },
+    include: { maaltijden: true },
+  });
+  bestelling.maaltijden.forEach((maaltijd) => {
+    if (maaltijd.leverdatum < new Date()) {
+      const error = new Error();
+      error.status = 403;
+      error.code = "FORBIDDEN";
+      error.message = `Kan bestelling met bestellingsnr ${bestellingsnr} niet verwijderen, omdat er minstens 1 maaltijd in het verleden ligt.`;
+      error.details = { bestellingsnr };
+      throw error;
+    }
+  });
+
   //bijhorende maaltijden worden ook vewijderd door cascade in schema.prisma
   try {
     const deleted = await prisma.bestelling.delete({

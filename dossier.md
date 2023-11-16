@@ -28,7 +28,7 @@ Bij een broodmaaltijd bestaat de keuze uit: bruine of witte sandwiches, 5 keuzes
 Een medewerker kan slechts 1 maaltijd per shift bestellen, leverdatum van een maaltijd moet dus uniek zijn.
 
 **ERD:**  
-![ERD](./ERD/ERDv5.png "ERD")  
+![ERD](./images/ERD/ERDv5.png "ERD")  
 
 **Mapping:**
 
@@ -46,8 +46,32 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 
 ## Screenshots
 
-> Voeg enkele (nuttige!) screenshots toe die tonen wat de app doet.
-> Dit is weinig zinvol indien je enkel Web Services volgt, verwijder dan deze sectie.
+![login](./images/screenshots_app/login.png "login")  
+Login  
+![registreren](./images/screenshots_app/registreren.png "registreren")  
+Registreren  
+![home](./images/screenshots_app/home.png "home")  
+Hoofdpagina  
+![warmeMaaltijd](./images/screenshots_app/warmeMaaltijd.png "warme maaltijd")  
+Formulier warme maaltijd  
+![broodMaaltijd](./images/screenshots_app/broodMaaltijd.png "broodmaaltijd")  
+Formulier broodmaaltijd  
+![datumsDisabled](./images/screenshots_app/datumsDisabled.png "datumsDisabled")  
+Datum wordt gedisabled als er reeds een maaltijd is besteld/in winkelmandje zit op die datum
+![winkelmandje](./images/screenshots_app/winkelmandje.png "winkelmandje")  
+Winkelmandje  
+![bewerkMaaltijd](./images/screenshots_app/bewerkMaaltijd.png "bewerken maaltijd")  
+Bewerken van maaltijd in winkelmandje  
+![bestellingen](./images/screenshots_app/bestellingen.png "bestellingen")  
+Overzicht bestellingen  
+![zoekfunctie](./images/screenshots_app/zoekfunctie.png "zoekfunctie")  
+Zoekfunctie  
+![mijnProfiel](./images/screenshots_app/mijnProfiel.png "mijn profiel")  
+Mijn profiel  
+![notFound](./images/screenshots_app/notFound.png "not found")
+Page not found  
+
+
 
 ## API calls
 
@@ -103,7 +127,7 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
   `DELETE /api/medewerkers/:id`  
 
 ### Test coverage
-![testcoverage](./testCoverage.png "test coverage")  
+![testcoverage](./images/testCoverage.png "test coverage")  
 
 
 ## Behaalde minimumvereisten
@@ -130,13 +154,13 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 
   - [x] meerdere API calls (naast login/register)
   - [x] degelijke foutmeldingen indien API-call faalt
-  - [ ] gebruikt useState enkel voor lokale state
-  - [ ] gebruikt gepast state management voor globale state - indien van toepassing
+  - [x] gebruikt useState enkel voor lokale state
+  - [x] gebruikt gepast state management voor globale state - indien van toepassing
         <br />
 
 - **hooks**
 
-  - [ ] gebruikt de hooks op de juiste manier
+  - [x] gebruikt de hooks op de juiste manier
         <br />
 
 - **varia**
@@ -144,8 +168,8 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
   - [x] een aantal niet-triviale e2e testen
   - [x] minstens één extra technologie
   - [x] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
-  - [ ] duidelijke en volledige README.md
-  - [ ] volledig en tijdig ingediend dossier en voldoende commits
+  - [x] duidelijke en volledige README.md
+  - [x] volledig en tijdig ingediend dossier en voldoende commits
 
 ### Web Services
 
@@ -185,8 +209,8 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
   - [x] een aantal niet-triviale integratietesten (min. 1 controller >=80% coverage)
   - [x] minstens één extra technologie 
   - [x] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
-  - [ ] duidelijke en volledige README.md
-  - [ ] volledig en tijdig ingediend dossier en voldoende commits
+  - [x] duidelijke en volledige README.md
+  - [x] volledig en tijdig ingediend dossier en voldoende commits
 
 ## Projectstructuur
 
@@ -229,9 +253,9 @@ De database wordt online opgebouwd door in render als build command `yarn prisma
 - maaltijdBewerkenInWinkelmandje:  
 maaltijd toevoegen in winkelmandje, bewerken in winkelmandje, bewerking ok  
 - maaltijdToevoegenZonderLeverdatum:  
- maaltijd toevoegen zonder leverdatum: foutboodschap en geen niet toegevoegd aan winkelmandje  
+ maaltijd toevoegen zonder leverdatum: foutboodschap en niet toegevoegd aan winkelmandje  
 - maaltijdToevoegenZonderLeverplaats:  
-maaltijd toevoegen zonder leverplaats: foutboodschap en geen niet toegevoegd aan winkelmandje  
+maaltijd toevoegen zonder leverplaats: foutboodschap en niet toegevoegd aan winkelmandje  
 - tweeMaaltijdenZelfdeLeverdatumTrachtenSelecteren:  
   twee maaltijden met zelfde leverdatum selecteren is onmogelijk  
 - voegBroodMaaltijdToeAanWinkelmandjeEnVerwijder:  
@@ -257,9 +281,10 @@ warme maaltijd correct toegevoegd aan winkelmandje, daarna verwijderen
 - `DELETE /api/bestellingen/:id`:
   - als gebruiker: bestellingen van gebruiker toegelaten, van andere niet => fout
   - als admin: bestelling van iedereen toegelaten
+  - enkel bestellingen met enkel maaltijden in de toekomst kunnen worden verwijderd, anders fout.
 - `GET /api/bestellingen/leverdata`:
-  - als gebruiker: leverdata van eigen bestelligen 
-  - als admin: leverdata van alle bestellingen
+  - zowel admin als gebruiker: leverdata van eigen bestellingen 
+
 #### Diensten  
 - `GET /api/diensten`
 #### Suggesties  
@@ -285,7 +310,8 @@ warme maaltijd correct toegevoegd aan winkelmandje, daarna verwijderen
 
 ### Front-end Web Development
 
-> Zijn er gekende bugs?
+- Als je uitlogt en terug inlogt als een andere gebruiker kan je op /bestellingen nog kort de bestellingen zien van de eerste ingelogde gebruiker. 
+- Annuleer knoppen op /profiel werken niet steeds direct.
 
 ### Web Services
 
