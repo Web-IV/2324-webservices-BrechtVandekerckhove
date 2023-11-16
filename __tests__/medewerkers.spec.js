@@ -2,6 +2,7 @@ const Role = require("../src/core/rollen");
 
 const { withServer, login, loginAdmin } = require("./supertest.setup");
 const { testAuthHeader } = require("./common/auth");
+const { expectCt } = require("koa-helmet");
 
 describe("Medewerkers", () => {
   let prisma, request, authHeader;
@@ -208,8 +209,37 @@ describe("Medewerkers", () => {
       expect(response.body.message).toBe(
         "Validation failed, check details for more information"
       );
-  });
- 
+    });
+    it("wachtwoord wijzigen, opnieuw inloggen faalt, daarna wachtwoord terugzetten", async () => {
+      // parameter te kort meegeven
+      const response = await request
+        .put(`${url}/${testUser.id}`)
+        .send({
+          huidigWachtwoord: "12345678",
+          nieuwWachtwoord: "123456789",
+          bevestigingNieuwWachtwoord: "123456789",
+        })
+        .set("Authorization", authHeader);
+      expect(response.status).toBe(200);
+
+      try {
+        authHeader = await login(request);
+      } catch (error) {
+        expect(error.message).toBe(
+          "Het opgegeven e-mailadres en wachtwoord komen niet overeen."
+        );
+      }
+
+      const response2 = await request
+        .put(`${url}/${testUser.id}`)
+        .send({
+          huidigWachtwoord: "123456789",
+          nieuwWachtwoord: "12345678",
+          bevestigingNieuwWachtwoord: "12345678",
+        })
+        .set("Authorization", authHeader);
+      expect(response2.status).toBe(200);
+    });
 
     it("should 403 and return message (unauthorized request)", async () => {
       const response = await request
@@ -228,7 +258,7 @@ describe("Medewerkers", () => {
       );
       expect(response.body.code).toBe("FORBIDDEN");
     });
-    
+
     //dienst hier terug goedzetten voor andere testen
     it("should 200 and return changed medewerker (as Admin)", async () => {
       authHeader = await loginAdmin(request);

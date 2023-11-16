@@ -96,7 +96,9 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
   `POST /api/medewerkers/:id`  
 
 - Een admin kan een medewerker aanpassen, een gebruiker zichzelf:   
-  `PUT /api/medewerkers/:id`  
+  `PUT /api/medewerkers/:id` 
+- Wachtwoord wijzigen:  
+`PUT /api/medewerkers/:id`  
 
 - Een admin kan een medewerker verwijderen, een gebruiker zichzelf:   
   `DELETE /api/medewerkers/:id`  
