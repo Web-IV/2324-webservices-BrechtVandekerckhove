@@ -2,17 +2,21 @@
 
 - [x] Front-end Web Development:
   - https://github.com/Web-IV/2324-frontendweb-BrechtVandekerckhove.git
-  - <LINK_ONLINE_VERSIE_HIER>
+  - https://web-iv-2324-frontendweb.onrender.com/
 - [x] Web Services:
   - https://github.com/Web-IV/2324-webservices-BrechtVandekerckhove.git
-  - <LINK_ONLINE_VERSIE_HIER>
+  - https://web-iv-2324-webservices.onrender.com
 
 **Logingegevens**
 
-- Gebruikersnaam/e-mailadres:
-- Wachtwoord:
+Admin:  
+- E-mailadres: admin@hogent.be  
+- Wachtwoord: 123admin@
 
-> Vul eventueel aan met extra accounts voor administrators of andere rollen.
+User:  
+- E-mailadres: test@hogent.be
+- Wachtwoord: 12345678
+
 
 ## Projectbeschrijving
 
@@ -46,10 +50,6 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 > Dit is weinig zinvol indien je enkel Web Services volgt, verwijder dan deze sectie.
 
 ## API calls
-
-> Maak hier een oplijsting van alle API cals in jouw applicatie. Groepeer dit per entiteit. Hieronder een voorbeeld.
-> Dit is weinig zinvol indien je enkel Front-end Web Development volgt, verwijder dan deze sectie.
-> Indien je als extra Swagger koos, dan voeg je hier een link toe naar jouw online documentatie. Swagger geeft nl. exact (en nog veel meer) wat je hieronder moet schrijven.
 
 ### Bestelling
 
@@ -95,10 +95,9 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 - Een admin kan een medewerker opvragen, een gebruiker zichzelf:   
   `POST /api/medewerkers/:id`  
 
-- Een admin kan een medewerker aanpassen, een gebruiker zichzelf:   
-  `PUT /api/medewerkers/:id` 
-- Wachtwoord wijzigen:  
-`PUT /api/medewerkers/:id`  
+- Een admin kan een medewerker aanpassen (ook wachtwoord), een gebruiker zichzelf:   
+  `PUT /api/medewerkers/:id`  
+
 
 - Een admin kan een medewerker verwijderen, een gebruiker zichzelf:   
   `DELETE /api/medewerkers/:id`  
@@ -109,29 +108,28 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 
 ## Behaalde minimumvereisten
 
-> Duid per vak aan welke minimumvereisten je denkt behaald te hebben
 
 ### Front-end Web Development
 
 - **componenten**
 
-  - [ ] heeft meerdere componenten - dom & slim (naast login/register)
-  - [ ] applicatie is voldoende complex
+  - [x] heeft meerdere componenten - dom & slim (naast login/register)
+  - [x] applicatie is voldoende complex
   - [ ] definieert constanten (variabelen, functies en componenten) buiten de component
-  - [ ] minstens één form met meerdere velden met validatie (naast login/register)
-  - [ ] login systeem
+  - [x] minstens één form met meerdere velden met validatie (naast login/register)
+  - [x] login systeem
         <br />
 
 - **routing**
 
-  - [ ] heeft minstens 2 pagina's (naast login/register)
-  - [ ] routes worden afgeschermd met authenticatie en autorisatie
+  - [x] heeft minstens 2 pagina's (naast login/register)
+  - [x] routes worden afgeschermd met authenticatie en autorisatie
         <br />
 
 - **state-management**
 
-  - [ ] meerdere API calls (naast login/register)
-  - [ ] degelijke foutmeldingen indien API-call faalt
+  - [x] meerdere API calls (naast login/register)
+  - [x] degelijke foutmeldingen indien API-call faalt
   - [ ] gebruikt useState enkel voor lokale state
   - [ ] gebruikt gepast state management voor globale state - indien van toepassing
         <br />
@@ -143,9 +141,9 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 
 - **varia**
 
-  - [ ] een aantal niet-triviale e2e testen
-  - [ ] minstens één extra technologie
-  - [ ] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
+  - [x] een aantal niet-triviale e2e testen
+  - [x] minstens één extra technologie
+  - [x] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
   - [ ] duidelijke en volledige README.md
   - [ ] volledig en tijdig ingediend dossier en voldoende commits
 
@@ -194,20 +192,24 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 
 ### Front-end Web Development
 
-> Hoe heb je jouw applicatie gestructureerd (mappen, design patterns, hiërarchie van componenten, state...)?
+Gelijkaardige structuur als de voorbeeldapplicatie. In de src map bevindt zich bovendien een map data. Daar heb ik de opties voor de selectvelden geplaatst aangezien deze zich niet in de databank bevinden. 
 
 ### Web Services
 
-Zelfde structuur als de voorbeeldapplicatie, voor ORM prisma een apparte map voorzien.
+Gelijkaardige structuur als de voorbeeldapplicatie, voor ORM prisma een apparte map voorzien.
 ## Extra technologie
 
 ### Front-end Web Development
-
-> Wat is de extra technologie? Hoe werkt het? Voeg een link naar het npm package toe!
+- Ant Design library: https://www.npmjs.com/package/antd en https://ant.design/  
+Een ui library met vele kant-en-klare oplossingen. Ik heb hier vooral componenten uitgebruikt.  
+- Formik(-antd): https://www.npmjs.com/package/formik-antd en https://www.npmjs.com/package/formik  
+Een package om eenvoudiger formulieren te maken in React, formik-antd is specifiek om met de antd library te werken.   
+- Yup: https://www.npmjs.com/package/yup  
+Een hulp om validatieschema's te maken, gebruikt voor de formulieren
 
 ### Web Services
 
-ORM Prisma: https://www.npmjs.com/package/prisma  
+- ORM Prisma: https://www.npmjs.com/package/prisma en https://www.prisma.io/  
 Het databank ontwerp configureer je via een schema.prisma bestand, queries gebeuren via functies (create, findFirst, findUnqiue, delete, update, ...).  
 Migraties zijn eenvoudig uit te voeren na het aanpassen van het schema.prisma bestand in development mode via `yarn prisma migrate dev`.  
 Seeden van de database gebeurt via het seed.js bestand en kan via commando `yarn prisma db seed` uitgevoerd worden (wordt ook uitgevoerd bij `yarn prisma migrate dev`).  
@@ -217,8 +219,29 @@ De database wordt online opgebouwd door in render als build command `yarn prisma
 ## Testresultaten
 
 ### Front-end Web Development
+- bestellingOverzicht:
+  - bestellingen en maaltijden worden weergeven
+  - laadindicator wordt getoond
+  - zoekfunctie toont correct maaltijd en naam
+  - zoekfunctie toont ook correct meerdere maaltijden en namen
+  - zoekfunctie toont niks bij geen match
+  - foutboodschap wordt getoond bij fout back-end
+- maaltijdBewerkenInWinkelmandje:  
+maaltijd toevoegen in winkelmandje, bewerken in winkelmandje, bewerking ok  
+- maaltijdToevoegenZonderLeverdatum:  
+ maaltijd toevoegen zonder leverdatum: foutboodschap en geen niet toegevoegd aan winkelmandje  
+- maaltijdToevoegenZonderLeverplaats:  
+maaltijd toevoegen zonder leverplaats: foutboodschap en geen niet toegevoegd aan winkelmandje  
+- tweeMaaltijdenZelfdeLeverdatumTrachtenSelecteren:  
+  twee maaltijden met zelfde leverdatum selecteren is onmogelijk  
+- voegBroodMaaltijdToeAanWinkelmandjeEnVerwijder:  
+broodmaaltijd correct toegevoegd aan winkelmandje, daarna verwijderen  
+- voegWarmeMaaltijdToeAanWinkelmandjeEnVerwijder:  
+warme maaltijd correct toegevoegd aan winkelmandje, daarna verwijderen  
 
-> Schrijf hier een korte oplijsting en beschrijving van de geschreven testen
+
+
+
 
 ### Web Services
 
