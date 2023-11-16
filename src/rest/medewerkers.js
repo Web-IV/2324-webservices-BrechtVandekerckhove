@@ -22,6 +22,7 @@ register.validationScheme = {
     voornaam: Joi.string().max(191),
     email: Joi.string().email().max(191),
     wachtwoord: Joi.string(),
+    bevestigingWachtwoord: Joi.string().valid(Joi.ref("wachtwoord")),
     dienst: Joi.string().max(191),
   },
 };
@@ -49,13 +50,21 @@ updateMedewerkerById.validationScheme = {
   params: {
     id: Joi.number().integer().positive(),
   },
-  body: {
-    naam: Joi.string().max(191),
-    voornaam: Joi.string().max(191),
-    email: Joi.string().email().max(191),
-    wachtwoord: Joi.string(),
-    dienst: Joi.string().max(191),
-  },
+  body: Joi.object({
+    naam: Joi.string().max(191).optional(),
+    voornaam: Joi.string().max(191).optional(),
+    email: Joi.string().email().max(191).optional(),
+    dienst: Joi.string().max(191).optional(),
+    huidigWachtwoord: Joi.string().required(),
+    nieuwWachtwoord: Joi.string().optional(),
+    bevestigingNieuwWachtwoord: Joi.when("nieuwWachtwoord", {
+      is: Joi.exist(),
+      then: Joi.string().valid(Joi.ref("nieuwWachtwoord")).required(),
+      otherwise: Joi.forbidden(),
+    }),
+  })
+    .or("naam", "voornaam", "email", "dienst", "huidigWachtwoord")
+    .and("naam", "voornaam", "email", "dienst"),
 };
 
 const deleteMedewerkerById = async (ctx) => {

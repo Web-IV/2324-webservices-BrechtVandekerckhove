@@ -21,7 +21,7 @@ module.exports = (app) => {
   router.get(
     "/",
     validate(getAllDiensten.validationScheme),
-    requireAuthentication,
+    
     getAllDiensten
   );
 

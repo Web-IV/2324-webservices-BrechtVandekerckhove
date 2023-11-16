@@ -4,7 +4,7 @@ const testAuthHeader = (requestFactory) => {
 
     expect(response.statusCode).toBe(401);
     expect(response.body.code).toBe("UNAUTHORIZED");
-    expect(response.body.message).toBe("Je moet ingelogd zijn");
+    expect(response.body.message).toBe("Je moet ingelogd zijn.");
   });
 
   test("it should 401 when invalid authorization token provided", async () => {

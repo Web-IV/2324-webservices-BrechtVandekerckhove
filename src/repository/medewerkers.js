@@ -56,7 +56,10 @@ const updateById = async (
   { naam, voornaam, email, wachtwoord_hash, dienst }
 ) => {
   try {
-    const dienstId = await dienstOmzettenNaarId(dienst);
+    let dienstId;
+    if (dienst) {
+      dienstId = await dienstOmzettenNaarId(dienst);
+    }
     const updateMedewerker = await prisma.medewerker.update({
       where: { id: id },
       data: {

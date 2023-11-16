@@ -13,18 +13,37 @@ Ik verwacht dat volgende software reeds geïnstalleerd is:
 - [NodeJS](https://nodejs.org)
 - [Yarn](https://yarnpkg.com)
 - [MySQL Community Server](https://dev.mysql.com/downloads/mysql/)
-- ...
 
-> Vul eventueel aan
+Voor gebruikers van [Chocolatey](https://chocolatey.org/):
+```powershell
+choco install nodejs -y
+choco install yarn -y
+choco install mysql -y
+choco install mysql.workbench -y
+```
+
 
 ## Opstarten
 
-> Schrijf hier hoe we de applicatie starten (.env bestanden aanmaken, commando's om uit te voeren...)
+- Maak een `.env`  bestand aan in de root met onderstaande code. 
+Pas username, password, localhost en poortnummer aan jouw lokale instellingen.
+```ini
+`NODE_ENV=development`  
+`DATABASE_URL="mysql://username:password@localhost:3306/midnightmeals`
+```
+- Installeer alle dependencies: `yarn`  
+- Seed de database: `yarn prisma db seed`  
+- Start de development server: `yarn start`  
 
-Maak een .env bestand aan in de root met onderstaande code
-
-`NODE_ENV=development`
 
 ## Testen
 
-> Schrijf hier hoe we de testen uitvoeren (.env bestanden aanmaken, commando's om uit te voeren...)
+- Maak een `.env.test` bestand aan in de root met onderstaande code  
+```ini
+NODE_ENV=test  
+```  
+- Installeer alle dependencies: `yarn`
+- Seed de database: `yarn prisma db seed`  
+- Start de development server: `yarn test`
+- Coverage nakijken: `yarn test:coverage`
+

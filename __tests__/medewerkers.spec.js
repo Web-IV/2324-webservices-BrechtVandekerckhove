@@ -175,7 +175,7 @@ describe("Medewerkers", () => {
           naam: "Test",
           voornaam: "User",
           email: "test.user@hogent.be",
-          wachtwoord: "12345678",
+          huidigWachtwoord: "12345678",
           dienst: "DIENST 2",
         })
         .set("Authorization", authHeader);
@@ -193,6 +193,24 @@ describe("Medewerkers", () => {
         },
       });
     });
+    it("should 400 and return message", async () => {
+      // parameter te kort meegeven
+      const response = await request
+        .put(`${url}/${testUser.id}`)
+        .send({
+          naam: "Test",
+          email: "test.user@hogent.be",
+          huidigWachtwoord: "12345678",
+          dienst: "DIENST 2",
+        })
+        .set("Authorization", authHeader);
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe(
+        "Validation failed, check details for more information"
+      );
+  });
+ 
+
     it("should 403 and return message (unauthorized request)", async () => {
       const response = await request
         .put(`${url}/${testAdmin.id}`)
@@ -200,7 +218,7 @@ describe("Medewerkers", () => {
           naam: "Admin",
           voornaam: "Nieuwe voornaam",
           email: "test.user@hogent.be",
-          wachtwoord: "12345678",
+          huidigWachtwoord: "12345678",
           dienst: "DIENST 2",
         })
         .set("Authorization", authHeader);
@@ -210,6 +228,7 @@ describe("Medewerkers", () => {
       );
       expect(response.body.code).toBe("FORBIDDEN");
     });
+    
     //dienst hier terug goedzetten voor andere testen
     it("should 200 and return changed medewerker (as Admin)", async () => {
       authHeader = await loginAdmin(request);
@@ -220,7 +239,7 @@ describe("Medewerkers", () => {
           naam: "Test",
           voornaam: "User",
           email: "test.user@hogent.be",
-          wachtwoord: "12345678",
+          huidigWachtwoord: "12345678",
           dienst: "DIENST 1",
         })
         .set("Authorization", authHeader);

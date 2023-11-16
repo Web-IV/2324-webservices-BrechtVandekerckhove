@@ -74,9 +74,22 @@ const register = async ({ naam, voornaam, email, wachtwoord, dienst }) => {
 //rollen uitgelaten voor de eenvoud in frontend
 const updateById = async (
   id,
-  { naam, voornaam, email, wachtwoord, dienst }
+  { naam, voornaam, email, dienst, huidigWachtwoord, nieuwWachtwoord }
 ) => {
-  const wachtwoord_hash = await hashPassword(wachtwoord);
+  const medewerker = await medewerkerRepository.findById(id);
+  const passwordValid = await verifyPassword(
+    huidigWachtwoord,
+    medewerker.wachtwoord_hash
+  );
+
+  if (!passwordValid) {
+    // gebruiker is hier ingelogd bij wijziging van gegevens
+    throw ServiceError.unauthorized("Foutief wachtwoord!");
+  }
+  if (nieuwWachtwoord) {
+    huidigWachtwoord = nieuwWachtwoord;
+  }
+  const wachtwoord_hash = await hashPassword(huidigWachtwoord);
   try {
     await medewerkerRepository.updateById(id, {
       naam,
@@ -98,7 +111,7 @@ const updateById = async (
  */
 const deleteById = async (id) => {
   try {
- await medewerkerRepository.deleteById(id);
+    await medewerkerRepository.deleteById(id);
   } catch (error) {
     throw handleDBError(error);
   }
@@ -119,11 +132,10 @@ const makeLoginData = async (medewerker) => {
 
 const login = async (email, wachtwoord) => {
   const medewerker = await medewerkerRepository.findByEmail(email);
-  //te testen!!!
+
   if (!medewerker) {
-    // DO NOT expose we don't know the user
     throw ServiceError.unauthorized(
-      "Het opgegeven emailadres en wachtwoord komen niet overeen."
+      "Het opgegeven e-mailadres en wachtwoord komen niet overeen."
     );
   }
 
@@ -135,7 +147,7 @@ const login = async (email, wachtwoord) => {
   if (!passwordValid) {
     // DO NOT expose we know the user but an invalid password was given
     throw ServiceError.unauthorized(
-      "Het opgegeven emailadres en wachtwoord komen niet overeen."
+      "Het opgegeven e-mailadres en wachtwoord komen niet overeen."
     );
   }
 
@@ -144,7 +156,7 @@ const login = async (email, wachtwoord) => {
 
 const checkAndParseSession = async (authHeader) => {
   if (!authHeader) {
-    throw ServiceError.unauthorized("Je moet ingelogd zijn");
+    throw ServiceError.unauthorized("Je moet ingelogd zijn.");
   }
 
   if (!authHeader.startsWith("Bearer ")) {

@@ -35,6 +35,6 @@ describe("Diensten", () => {
       expect(response.body.items).toContainEqual(dienst1);
       expect(response.body.items).toContainEqual(dienst2);
     });
-    testAuthHeader(() => request.get(url));
+   
   });
 });

@@ -101,6 +101,8 @@ IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht
 - Een admin kan een medewerker verwijderen, een gebruiker zichzelf:   
   `DELETE /api/medewerkers/:id`  
 
+### Test coverage
+![testcoverage](./testCoverage.png "test coverage")  
 
 
 ## Behaalde minimumvereisten
@@ -218,7 +220,6 @@ De database wordt online opgebouwd door in render als build command `yarn prisma
 
 ### Web Services
 
-> Schrijf hier een korte oplijsting en beschrijving van de geschreven testen + voeg een screenshot van de coverage en uitvoering toe
 
 #### Bestellingen
 - `GET /api/bestellingen`:
@@ -251,6 +252,7 @@ De database wordt online opgebouwd door in render als build command `yarn prisma
 - `PUT /api/medewerkers/:id`:
   - als gebruiker: zichzelf toegelaten, anderen niet => fout
   - als admin: iedere medewerker toegelaten
+  - paramater te weinig meegeven => fout
 - `DELETE /api/medewerkers/:id`:
   - als gebruiker: zichzelf toegelaten, anderen niet => fout
   - als admin: iedere medewerker toegelaten
@@ -264,14 +266,3 @@ De database wordt online opgebouwd door in render als build command `yarn prisma
 
 > Zijn er gekende bugs?
 
-## Wat is er verbeterd/aangepast?
-
-> Deze sectie is enkel voor 2e zittijd, verwijder deze in 1e zittijd.
-
-### Front-end Web Development
-
-- Dit en dat
-
-### Web Services
-
-- Oh en dit ook
