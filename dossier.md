@@ -77,13 +77,13 @@ Page not found
 
 ### Bestelling
 
-- Een gebruiker moet al zijn bestellingen kunnen bekijken:  
+- Een gebruiker moet al zijn bestellingen kunnen bekijken, admin alle bestellingen:  
   `GET /api/bestellingen` 
 
 - Een gebruiker moet zijn bestelling in detail kunnen bekijken:  
   `GET /api/bestellingen/:bestellingsnr` 
 
-- Alle leverdata van alle bestellingen moeten opgevraagd kunnen worden zodat een nieuwe maaltijd niet op eenzelfde leverdatum geplaatst wordt:  
+- Alle leverdata van alle eigen bestellingen moeten opgevraagd kunnen worden zodat een nieuwe maaltijd niet op eenzelfde leverdatum geplaatst kan worden:  
 `GET /api/bestellingen/leverdata`
 
 - Een gebruiker moet een winkelmandje kunnen bevestigen, bestelling dus plaatsen:  
@@ -95,8 +95,7 @@ Page not found
 
 ### SuggestieVanDeMaand
 - De suggesties moeten opgevraagd kunnen worden:  
-`GET /api/suggesties` 
-
+`GET /api/suggesties`   
 
 - De omschrijving van een bepaalde (vegetarische) suggestie van bepaalde maand kan worden opgevraagd (wordt niet gebruikt in de front-end app):  
 `GET /api/suggesties?maand=${maand}&vegie={vegie}`
@@ -197,8 +196,8 @@ Page not found
 
   - [x] meerdere routes met invoervalidatie
   - [x] degelijke foutboodschappen
-  - [ ] volgt de conventies van een RESTful API
-  - [ ] bevat geen domeinlogica
+  - [x] volgt de conventies van een RESTful API
+  - [x] bevat geen domeinlogica
   - [x] geen API calls voor entiteiten die geen zin hebben zonder hun ouder (bvb tussentabellen)
   - [x] degelijke authorisatie/authenticatie op alle routes
         <br />
@@ -220,7 +219,7 @@ Gelijkaardige structuur als de voorbeeldapplicatie. In de src map bevindt zich b
 
 ### Web Services
 
-Gelijkaardige structuur als de voorbeeldapplicatie, voor ORM prisma een apparte map voorzien.
+Gelijkaardige structuur als de voorbeeldapplicatie, voor ORM prisma een aparte map voorzien.
 ## Extra technologie
 
 ### Front-end Web Development
@@ -311,9 +310,10 @@ warme maaltijd correct toegevoegd aan winkelmandje, daarna verwijderen
 ### Front-end Web Development
 
 - Als je uitlogt en terug inlogt als een andere gebruiker kan je op /bestellingen nog kort de bestellingen zien van de eerste ingelogde gebruiker. 
-- Annuleer knoppen op /profiel werken niet steeds direct.
+- Annuleer buttons op /profiel werken niet steeds direct.
+- Datepickers doen soms raar, gaan heel ver in de toekomst jaar > 2100.
 
 ### Web Services
 
-> Zijn er gekende bugs?
+
 

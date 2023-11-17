@@ -6,14 +6,9 @@ const validate = require("../core/validation");
 const { requireAuthentication } = require("../core/auth");
 const Role = require("../core/rollen");
 
-//ADMIN mag alles zien, USER mag enkel eigen bestellingen zien
 const getAllBestellingen = async (ctx) => {
   const { medewerkerId, rollen } = ctx.state.session;
-  if (rollen.includes(Role.ADMIN)) {
-    ctx.body = await bestellingService.getAll();
-  } else {
-    ctx.body = await bestellingService.getAll(medewerkerId);
-  }
+  ctx.body = await bestellingService.getAll(medewerkerId, rollen);
 };
 getAllBestellingen.validationScheme = null;
 

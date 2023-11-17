@@ -2,7 +2,6 @@ const Router = require("@koa/router");
 
 const dienstenService = require("../service/diensten");
 const validate = require("../core/validation");
-const { requireAuthentication } = require("../core/auth");
 
 const getAllDiensten = async (ctx) => {
   ctx.body = await dienstenService.getAll();

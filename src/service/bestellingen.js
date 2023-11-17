@@ -1,11 +1,15 @@
 const bestellingenRepository = require("../repository/bestellingen");
-
+const Role = require("../core/rollen");
 
 const handleDBError = require("./_handleDBError");
 
-//medewerkersId optioneel, indien niet meegegeven worden alle bestellingen opgehaald
-const getAll = async (medewerkerId) => {
-  return await bestellingenRepository.findAll(medewerkerId);
+//ADMIN mag alles zien, USER mag enkel eigen bestellingen zien
+const getAll = async (medewerkerId, rollen) => {
+  if (rollen && rollen.includes(Role.ADMIN)) {
+    return await bestellingenRepository.findAll();
+  } else {
+    return await bestellingenRepository.findAll(medewerkerId);
+  }
 };
 
 const getByBestellingsnr = async (bestellingsnr) => {
@@ -20,9 +24,7 @@ const getByBestellingsnr = async (bestellingsnr) => {
 };
 const deleteByBestellingsnr = async (bestellingsnr) => {
   try {
-    await bestellingenRepository.deleteByBestellingsnr(
-      bestellingsnr
-    );
+    await bestellingenRepository.deleteByBestellingsnr(bestellingsnr);
   } catch (error) {
     throw handleDBError(error);
   }
@@ -36,7 +38,7 @@ const create = async (bestelling) => {
     throw handleDBError(error);
   }
 };
-//medewerkersId optioneel, indien niet meegegeven worden de leverdata van alle bestellingen opgehaald
+
 const getLeverdata = async (medewerkerId) => {
   const bestellingen = await getAll(medewerkerId);
   const leverdata = bestellingen.items.reduce((acc, bestelling) => {
