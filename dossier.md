@@ -310,7 +310,6 @@ warme maaltijd correct toegevoegd aan winkelmandje, daarna verwijderen
 ### Front-end Web Development
 
 - Als je uitlogt en terug inlogt als een andere gebruiker kan je op /bestellingen nog kort de bestellingen zien van de eerste ingelogde gebruiker. 
-- Annuleer buttons op /profiel werken niet steeds direct.
 - Datepickers doen soms raar, gaan heel ver in de toekomst jaar > 2100.
 
 ### Web Services

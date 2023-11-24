@@ -11,13 +11,17 @@ const handleDBError = require("./_handleDBError");
  * Get all medewerkers.
  */
 const getAll = async () => {
-  const items = await medewerkerRepository.findAll();
-  return {
-    items: Object.values(items).map((medewerker) =>
-      makeExposedMedewerker(medewerker)
-    ),
-    count: items.length,
-  };
+  try {
+    const items = await medewerkerRepository.findAll();
+    return {
+      items: Object.values(items).map((medewerker) =>
+        makeExposedMedewerker(medewerker)
+      ),
+      count: items.length,
+    };
+  } catch (error) {
+    throw handleDBError(error);
+  }
 };
 
 /**

@@ -54,8 +54,8 @@ const handleDBError = (error) => {
     // Return error because we don't know what happened
     return error;
   }
-  if(  error instanceof Prisma.PrismaClientInitializationError){
-    return ServiceError.CONNECTION_FAILED("Geen connectie met de databank", meta);
+  if(error instanceof Prisma.PrismaClientInitializationError){
+    return ServiceError.connectionFailed("Geen connectie met de databank.",meta);
   }
   if (
     error instanceof Prisma.PrismaClientUnknownRequestError ||
