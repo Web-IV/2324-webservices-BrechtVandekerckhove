@@ -2,6 +2,7 @@ const NOT_FOUND = "NOT_FOUND";
 const VALIDATION_FAILED = "VALIDATION_FAILED";
 const UNAUTHORIZED = "UNAUTHORIZED";
 const FORBIDDEN = "FORBIDDEN";
+const CONNECTION_FAILED = "CONNECTION_FAILED";
 
 class ServiceError extends Error {
   constructor(code, message, details = {}) {
@@ -25,6 +26,9 @@ class ServiceError extends Error {
   static validationFailed(message, details) {
     return new ServiceError(VALIDATION_FAILED, message, details);
   }
+  static connectionFailed(message, details){
+    return new ServiceError(CONNECTION_FAILED, message, details);
+  }
   get isUnauthorized() {
     return this.code === UNAUTHORIZED;
   }
@@ -38,6 +42,9 @@ class ServiceError extends Error {
 
   get isValidationFailed() {
     return this.code === VALIDATION_FAILED;
+  }
+  get isConnectionFailed(){
+    return this.code === CONNECTION_FAILED;
   }
 }
 
