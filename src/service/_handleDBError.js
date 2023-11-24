@@ -54,16 +54,19 @@ const handleDBError = (error) => {
     // Return error because we don't know what happened
     return error;
   }
+  if(  error instanceof Prisma.PrismaClientInitializationError){
+    return ServiceError.CONNECTION_FAILED("Geen connectie met de databank", meta);
+  }
   if (
     error instanceof Prisma.PrismaClientUnknownRequestError ||
     error instanceof Prisma.PrismaClientRustPanicError ||
-    error instanceof Prisma.PrismaClientInitializationError ||
     error instanceof Prisma.PrismaClientValidationError
   ) {
-    // Return error because we don't know what happened (not a PrismaClientKnownRequestError)
     //mogelijke afhandeling voor andere prisma errors kunnen hier worden toegevoegd
     return error;
-  } else {
+  } 
+   // Return error because we don't know what happened (not a PrismaClientKnownRequestError)
+  else {
     return error;
   }
 };
