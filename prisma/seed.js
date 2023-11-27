@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
-const Role = require('../src/core/rollen');
+const Role = require("../src/core/rollen");
 
 async function main() {
   const suggestieVanDeMaandData = [
@@ -81,54 +81,83 @@ async function main() {
 
   const diensten = await prisma.dienst.createMany({
     data: [
-      { naam: 'BWC' },
-      { naam: 'CHI02' },
-      { naam: 'CHI05' },
-      { naam: 'CHI06' },
-      { naam: 'CHI07' },
-      { naam: 'CHI08' },
-      { naam: 'CHI10' },
-      { naam: 'CHI11' },
-      { naam: 'CHI12' },
-      { naam: 'CSA' },
-      { naam: 'dialyse' },
-      { naam: 'elektriekers' },
-      { naam: 'GER01' },
-      { naam: 'GER02' },
-      { naam: 'HBW' },
-      { naam: 'INZ01' },
-      { naam: 'INZ02' },
-      { naam: 'INZ03' },
-      { naam: 'INZ04' },
-      { naam: 'INT01' },
-      { naam: 'INT02' },
-      { naam: 'INT03' },
-      { naam: 'INT04' },
-      { naam: 'INT05' },
-      { naam: 'INT07' },
-      { naam: 'INT08' },
-      { naam: 'INT09' },
-      { naam: 'INT10' },
-      { naam: 'INT11' },
-      { naam: 'INT12' },
-      { naam: 'labo 24u' },
-      { naam: 'MAT01' },
-      { naam: 'MAT03' },
-      { naam: 'neonatologie' },
-      { naam: 'patiëntenvervoer' },
-      { naam: 'PED03' },
-      { naam: 'PED06' },
-      { naam: 'portiers' },
-      { naam: 'PSY01' },
-      { naam: 'PSY03' },
-      { naam: 'PSY04' },
-      { naam: 'PSY05' },
-      { naam: 'REV01' },
-      { naam: 'REV02' },
-      { naam: 'SPD01' },
-      { naam: 'stokers' }
-    ]
-    
+      { naam: "BWC" },
+      { naam: "CHI02" },
+      { naam: "CHI05" },
+      { naam: "CHI06" },
+      { naam: "CHI07" },
+      { naam: "CHI08" },
+      { naam: "CHI10" },
+      { naam: "CHI11" },
+      { naam: "CHI12" },
+      { naam: "CSA" },
+      { naam: "dialyse" },
+      { naam: "elektriekers" },
+      { naam: "GER01" },
+      { naam: "GER02" },
+      { naam: "HBW" },
+      { naam: "INZ01" },
+      { naam: "INZ02" },
+      { naam: "INZ03" },
+      { naam: "INZ04" },
+      { naam: "INT01" },
+      { naam: "INT02" },
+      { naam: "INT03" },
+      { naam: "INT04" },
+      { naam: "INT05" },
+      { naam: "INT07" },
+      { naam: "INT08" },
+      { naam: "INT09" },
+      { naam: "INT10" },
+      { naam: "INT11" },
+      { naam: "INT12" },
+      { naam: "labo 24u" },
+      { naam: "MAT01" },
+      { naam: "MAT03" },
+      { naam: "neonatologie" },
+      { naam: "patiëntenvervoer" },
+      { naam: "PED03" },
+      { naam: "PED06" },
+      { naam: "portiers" },
+      { naam: "PSY01" },
+      { naam: "PSY03" },
+      { naam: "PSY04" },
+      { naam: "PSY05" },
+      { naam: "REV01" },
+      { naam: "REV02" },
+      { naam: "SPD01" },
+      { naam: "stokers" },
+    ],
+  });
+  const admin = await prisma.medewerker.create({
+    data: {
+      naam: "Admin",
+      voornaam: "User",
+      email: "admin@hogent.be",
+      rollen: JSON.stringify([Role.ADMIN, Role.USER]),
+      dienst: {
+        connect: {
+          naam: "labo 24u",
+        },
+      },
+      wachtwoord_hash:
+        "$argon2id$v=19$m=131072,t=6,p=4$6xR8F8Imob+pkb/FUXPhIg$QXTfaZTfs1AAnExAa/xYTIry1aT87gnQjaG2wtOpP2g",
+    },
+  });
+  const test = await prisma.medewerker.create({
+    data: {
+      naam: "Test",
+      voornaam: "User",
+      email: "test@hogent.be",
+      dienst:{
+        connect: {
+          naam: "labo 24u",
+        },
+      },
+      rollen: JSON.stringify([Role.USER]),
+      wachtwoord_hash:
+        "$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4",
+    },
   });
 
   const brecht = await prisma.medewerker.create({
@@ -143,7 +172,8 @@ async function main() {
       naam: "Vandekerckhove",
       voornaam: "Brecht",
       email: "brecht.vandekerckhove@student.hogent.be",
-      wachtwoord_hash: '$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4',
+      wachtwoord_hash:
+        "$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4",
       rollen: JSON.stringify([Role.ADMIN, Role.USER]),
       dienst: {
         connect: {
@@ -216,7 +246,8 @@ async function main() {
       naam: "Balcaen",
       voornaam: "Melissa",
       email: "melissa.balcaen@uzgent.be",
-      wachtwoord_hash: '$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4',
+      wachtwoord_hash:
+        "$argon2id$v=19$m=131072,t=6,p=1$9AMcua9h7va8aUQSEgH/TA$TUFuJ6VPngyGThMBVo3ONOZ5xYfee9J1eNMcA5bSpq4",
       rollen: JSON.stringify([Role.USER]),
       dienst: { connect: { naam: "labo 24u" } },
       bestellingen: {

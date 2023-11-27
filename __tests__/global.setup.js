@@ -6,9 +6,23 @@ let prisma;
 
 module.exports = async () => {
   // Create a database connection
-   initializeLogger(config.get("log.level"), config.get("log.disabled"));
+  initializeLogger(config.get("log.level"), config.get("log.disabled"));
   prisma = require("../src/data/prisma");
-  
+
+  // Clear all data from the database to ensure a clean state
+  const deleteDiensten = prisma.dienst.deleteMany();
+  const deleteSuggesties = prisma.suggestieVanDeMaand.deleteMany();
+  const deleteMedewerkers = prisma.medewerker.deleteMany();
+  const deleteBestellingen = prisma.bestelling.deleteMany();
+  const deleteMaaltijden = prisma.maaltijd.deleteMany();
+
+  await prisma.$transaction([
+    deleteSuggesties,
+    deleteBestellingen,
+    deleteMedewerkers,
+    deleteMaaltijden,
+    deleteDiensten,
+  ]);
 
   const testDataDiensten = [
     { id: 100, naam: "DIENST 1" },
