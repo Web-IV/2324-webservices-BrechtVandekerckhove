@@ -175,7 +175,7 @@ Page not found
 - **datalaag**
 
   - [x] voldoende complex (meer dan één tabel, 2 een-op-veel of veel-op-veel relaties)
-  - [x] één module beheert de connectie + connectie wordt gesloten bij sluiten server (prisma raadt aan om connectie niet expliciet te sluiten)
+  - [x] één module beheert de connectie + connectie wordt gesloten bij sluiten server
   - [x] heeft migraties - indien van toepassing
   - [x] heeft seeds
         <br />
