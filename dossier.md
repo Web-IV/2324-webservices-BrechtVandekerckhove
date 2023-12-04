@@ -9,14 +9,15 @@
 
 **Logingegevens**
 
-Admin:  
-- E-mailadres: admin@hogent.be  
+Admin:
+
+- E-mailadres: admin@hogent.be
 - Wachtwoord: 123admin@
 
-User:  
+User:
+
 - E-mailadres: test@hogent.be
 - Wachtwoord: 12345678
-
 
 ## Projectbeschrijving
 
@@ -28,21 +29,20 @@ Bij een broodmaaltijd bestaat de keuze uit: bruine of witte sandwiches, 5 keuzes
 Een medewerker kan slechts 1 maaltijd per shift bestellen, leverdatum van een maaltijd moet dus uniek zijn.
 
 **ERD:**  
-![ERD](./images/ERD/ERDv5.png "ERD")  
+![ERD](./images/ERD/ERDv5.png "ERD")
 
 **Mapping:**
 
-**Medewerker** (<ins>id</ins>, naam, voornaam, email, wachtwoord_hash, rollen, dienst)  
-IR: vreemde sleutel _dienst_ verwijst naar _id_ uit _Dienst_, is verplicht   
+**Medewerker** (<ins>id</ins>, naam, voornaam, email, wachtwoord*hash, rollen, dienst)  
+IR: vreemde sleutel \_dienst* verwijst naar _id_ uit _Dienst_, is verplicht  
 **Bestelling** (<ins>bestellingsnr</ins>, besteldatum, medewerkersId)  
 IR: vreemde sleutel _medewerkersId_ verwijst naar _id_ uit _Medewerker_, is verplicht  
 **Maaltijd** (<ins>id</ins>, type, leverdatum, leverplaats, hoofdschotel, soep, dessert, typeSandwiches, hartigBeleg, zoetBeleg, vetstof, suggestieVanDeMaandId, bestellingsnr)  
 IR: vreemde sleutel _suggestieVanDeMaandId_ verwijst naar _id_ uit _SuggestieVanDeMaand_, is optioneel  
-IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestelling_, is optioneel   
+IR: vreemde sleutel _bestellingsnr_ verwijst naar _bestellingsnr_ uit _Bestelling_, is optioneel  
 IR: vreemde sleutel leverplaats verwijst naar _id_ uit _Dienst_, is verplicht  
 **SuggestieVanDeMaand** (<ins>id</ins>, maand, vegie, omschrijving)  
 **Dienst** (<ins>id</ins>, naam)
-
 
 ## Screenshots
 
@@ -69,68 +69,65 @@ Zoekfunctie
 ![mijnProfiel](./images/screenshots_app/mijnProfiel.png "mijn profiel")  
 Mijn profiel  
 ![notFound](./images/screenshots_app/notFound.png "not found")
-Page not found  
-
-
+Page not found
 
 ## API calls
 
 ### Bestelling
 
 - Een gebruiker moet al zijn bestellingen kunnen bekijken, admin alle bestellingen:  
-  `GET /api/bestellingen` 
+  `GET /api/bestellingen`
 
 - Een gebruiker moet zijn bestelling in detail kunnen bekijken:  
-  `GET /api/bestellingen/:bestellingsnr` 
+  `GET /api/bestellingen/:bestellingsnr`
 
 - Alle leverdata van alle eigen bestellingen moeten opgevraagd kunnen worden zodat een nieuwe maaltijd niet op eenzelfde leverdatum geplaatst kan worden:  
-`GET /api/bestellingen/leverdata`
+  `GET /api/bestellingen/leverdata`
 
 - Een gebruiker moet een winkelmandje kunnen bevestigen, bestelling dus plaatsen:  
-  `POST /api/bestellingen` 
+  `POST /api/bestellingen`
 
 - Een gebruiker moet een bestelling kunnen verwijderen:  
-  `DELETE /api/bestellingen/:bestellingsnr` 
-
+  `DELETE /api/bestellingen/:bestellingsnr`
 
 ### SuggestieVanDeMaand
+
 - De suggesties moeten opgevraagd kunnen worden:  
-`GET /api/suggesties`   
+  `GET /api/suggesties`
 
 - De omschrijving van een bepaalde (vegetarische) suggestie van bepaalde maand kan worden opgevraagd (wordt niet gebruikt in de front-end app):  
-`GET /api/suggesties?maand=${maand}&vegie={vegie}`
+  `GET /api/suggesties?maand=${maand}&vegie={vegie}`
 
 ### Dienst
-- De diensten kunnen worden opgevraagd:  
-`GET /api/diensten`  
 
-### Medewerker 
+- De diensten kunnen worden opgevraagd:  
+  `GET /api/diensten`
+
+### Medewerker
 
 - Een gebruiker kan zich registreren:  
-  `POST /api/medewerkers/register`   
+  `POST /api/medewerkers/register`
 
-- Een gebruiker kan inloggen:   
-  `POST /api/medewerkers/login`   
+- Een gebruiker kan inloggen:  
+  `POST /api/medewerkers/login`
 
-- Een admin kan alle medewerkers opvragen:   
-  `GET /api/medewerkers`   
+- Een admin kan alle medewerkers opvragen:  
+  `GET /api/medewerkers`
 
-- Een admin kan een medewerker opvragen, een gebruiker zichzelf:   
-  `POST /api/medewerkers/:id`  
+- Een admin kan een medewerker opvragen, een gebruiker zichzelf:  
+  `POST /api/medewerkers/:id`
 
-- Een admin kan een medewerker aanpassen (ook wachtwoord), een gebruiker zichzelf:   
-  `PUT /api/medewerkers/:id`  
+- Een admin kan een medewerker aanpassen (ook wachtwoord), een gebruiker zichzelf:  
+  `PUT /api/medewerkers/:id`
 
-
-- Een admin kan een medewerker verwijderen, een gebruiker zichzelf:   
-  `DELETE /api/medewerkers/:id`  
+- Een admin kan een medewerker verwijderen, een gebruiker zichzelf:  
+  `DELETE /api/medewerkers/:id`
 
 ### Test coverage
-![testcoverage](./images/testCoverage.png "test coverage")  
 
+![testcoverage](./images/testCoverage.png "test coverage")
 
 ## Behaalde minimumvereisten
-
 
 ### Front-end Web Development
 
@@ -206,7 +203,7 @@ Page not found
 
   - [x] er is een minimum aan logging voorzien
   - [x] een aantal niet-triviale integratietesten (min. 1 controller >=80% coverage)
-  - [x] minstens één extra technologie 
+  - [x] minstens één extra technologie
   - [x] maakt gebruik van de laatste ES-features (async/await, object destructuring, spread operator...)
   - [x] duidelijke en volledige README.md
   - [x] volledig en tijdig ingediend dossier en voldoende commits
@@ -215,33 +212,36 @@ Page not found
 
 ### Front-end Web Development
 
-Gelijkaardige structuur als de voorbeeldapplicatie. In de src map bevindt zich bovendien een map data. Daar heb ik de opties voor de selectvelden geplaatst aangezien deze zich niet in de databank bevinden. 
+Gelijkaardige structuur als de voorbeeldapplicatie. In de src map bevindt zich bovendien een map data. Daar heb ik de opties voor de selectvelden geplaatst aangezien deze zich niet in de databank bevinden.
 
 ### Web Services
 
 Gelijkaardige structuur als de voorbeeldapplicatie, voor ORM prisma een aparte map voorzien.
+
 ## Extra technologie
 
 ### Front-end Web Development
+
 - Ant Design library: https://www.npmjs.com/package/antd en https://ant.design/  
-Een ui library met vele kant-en-klare oplossingen. Ik heb hier vooral componenten uitgebruikt.  
+  Een ui library met vele kant-en-klare oplossingen. Ik heb hier vooral componenten uitgebruikt.
 - Formik(-antd): https://www.npmjs.com/package/formik-antd en https://www.npmjs.com/package/formik  
-Een package om eenvoudiger formulieren te maken in React, formik-antd is specifiek om met de antd library te werken.   
+  Een package om eenvoudiger formulieren te maken in React, formik-antd is specifiek om met de antd library te werken.
 - Yup: https://www.npmjs.com/package/yup  
-Een hulp om validatieschema's te maken, gebruikt voor de formulieren
+  Een hulp om validatieschema's te maken, gebruikt voor de formulieren
 
 ### Web Services
 
 - ORM Prisma: https://www.npmjs.com/package/prisma en https://www.prisma.io/  
-Het databank ontwerp configureer je via een schema.prisma bestand, queries gebeuren via functies (create, findFirst, findUnqiue, delete, update, ...).  
-Migraties zijn eenvoudig uit te voeren na het aanpassen van het schema.prisma bestand in development mode via `yarn prisma migrate dev`.  
-Seeden van de database gebeurt via het seed.js bestand en kan via commando `yarn prisma db seed` uitgevoerd worden (wordt ook uitgevoerd bij `yarn prisma migrate dev`).  
-De DATABASE_URL wordt opgeslagen als een omgevingsvariable. 
-De database wordt online opgebouwd door in render als build command `yarn prisma migrate deploy` mee te geven.
+  Het databank ontwerp configureer je via een schema.prisma bestand, queries gebeuren via functies (create, findFirst, findUnqiue, delete, update, ...).  
+  Migraties zijn eenvoudig uit te voeren na het aanpassen van het schema.prisma bestand in development mode via `yarn prisma migrate dev`.  
+  Seeden van de database gebeurt via het seed.js bestand en kan via commando `yarn prisma db seed` uitgevoerd worden (wordt ook uitgevoerd bij `yarn prisma migrate dev`).  
+  De DATABASE_URL wordt opgeslagen als een omgevingsvariable.
+  De database wordt online opgebouwd door in render als build command `yarn prisma migrate deploy` mee te geven.
 
 ## Testresultaten
 
 ### Front-end Web Development
+
 - bestellingOverzicht:
   - bestellingen en maaltijden worden weergeven
   - laadindicator wordt getoond
@@ -250,26 +250,20 @@ De database wordt online opgebouwd door in render als build command `yarn prisma
   - zoekfunctie toont niks bij geen match
   - foutboodschap wordt getoond bij fout back-end
 - maaltijdBewerkenInWinkelmandje:  
-maaltijd toevoegen in winkelmandje, bewerken in winkelmandje, bewerking ok  
+  maaltijd toevoegen in winkelmandje, bewerken in winkelmandje, bewerking ok
 - maaltijdToevoegenZonderLeverdatum:  
- maaltijd toevoegen zonder leverdatum: foutboodschap en niet toegevoegd aan winkelmandje  
-- maaltijdToevoegenZonderLeverplaats:  
-maaltijd toevoegen zonder leverplaats: foutboodschap en niet toegevoegd aan winkelmandje  
+  maaltijd toevoegen zonder leverdatum: foutboodschap en niet toegevoegd aan winkelmandje
 - tweeMaaltijdenZelfdeLeverdatumTrachtenSelecteren:  
-  twee maaltijden met zelfde leverdatum selecteren is onmogelijk  
+  twee maaltijden met zelfde leverdatum selecteren is onmogelijk
 - voegBroodMaaltijdToeAanWinkelmandjeEnVerwijder:  
-broodmaaltijd correct toegevoegd aan winkelmandje, daarna verwijderen  
+  broodmaaltijd correct toegevoegd aan winkelmandje, daarna verwijderen
 - voegWarmeMaaltijdToeAanWinkelmandjeEnVerwijder:  
-warme maaltijd correct toegevoegd aan winkelmandje, daarna verwijderen  
-
-
-
-
+  warme maaltijd correct toegevoegd aan winkelmandje, daarna verwijderen
 
 ### Web Services
 
-
 #### Bestellingen
+
 - `GET /api/bestellingen`:
   - als gebruiker: alle bestellingen van de gebruiker
   - als admin: alle bestellingen
@@ -282,17 +276,22 @@ warme maaltijd correct toegevoegd aan winkelmandje, daarna verwijderen
   - als admin: bestelling van iedereen toegelaten
   - enkel bestellingen met enkel maaltijden in de toekomst kunnen worden verwijderd, anders fout.
 - `GET /api/bestellingen/leverdata`:
-  - zowel admin als gebruiker: leverdata van eigen bestellingen 
+  - zowel admin als gebruiker: leverdata van eigen bestellingen
 
-#### Diensten  
+#### Diensten
+
 - `GET /api/diensten`
-#### Suggesties  
-- `GET /api/suggesties`  
+
+#### Suggesties
+
+- `GET /api/suggesties`
 - `GET /api/suggesties?maand=${maand}&vegie={vegie}`:
   - correcte maand en vegie params
   - foute maand param => fout
-#### Medewerker  
-- `GET /api/medewerkers`:  
+
+#### Medewerker
+
+- `GET /api/medewerkers`:
   - als gebruiker => fout
   - als admin
 - `GET /api/medewerkers/:id`:
@@ -305,14 +304,12 @@ warme maaltijd correct toegevoegd aan winkelmandje, daarna verwijderen
 - `DELETE /api/medewerkers/:id`:
   - als gebruiker: zichzelf toegelaten, anderen niet => fout
   - als admin: iedere medewerker toegelaten
+
 ## Gekende bugs
 
 ### Front-end Web Development
 
-- Als je uitlogt en terug inlogt als een andere gebruiker kan je op /bestellingen nog kort de bestellingen zien van de eerste ingelogde gebruiker. 
+- Als je uitlogt en terug inlogt als een andere gebruiker kan je op /bestellingen nog kort de bestellingen zien van de eerste ingelogde gebruiker.
 - Datepickers doen soms raar, gaan heel ver in de toekomst jaar > 2100.
 
 ### Web Services
-
-
-
