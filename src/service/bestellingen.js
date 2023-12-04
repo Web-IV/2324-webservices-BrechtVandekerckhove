@@ -63,9 +63,12 @@ const create = async (bestelling) => {
         },
       });
       if (maaltijdMetZelfdeLeverdatum) {
-        throw new Error(
-          `Reeds maaltijd gekend op leverdatum ${maaltijd.leverdatum} voor medewerker met id ${bestelling.medewerkerId}.`
-        );
+        const error = new Error();
+        error.status = 403;
+        error.code = "FORBIDDEN";
+        error.message = `Reeds maaltijd gekend op leverdatum ${maaltijd.leverdatum} voor medewerker met id ${bestelling.medewerkerId}.`;
+        error.details = { maaltijd };
+        throw error;
       }
     });
 
