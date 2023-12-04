@@ -96,28 +96,11 @@ const makeExposedMedewerker = (medewerker) => {
 };
 
 const deleteByBestellingsnr = async (bestellingsnr) => {
-  //controle of alle maaltijden in de toekomst liggen
-  const bestelling = await prisma.bestelling.findUnique({
-    where: { bestellingsnr: bestellingsnr },
-    include: { maaltijden: true },
-  });
-  bestelling.maaltijden.forEach((maaltijd) => {
-    if (maaltijd.leverdatum < new Date()) {
-      const error = new Error();
-      error.status = 403;
-      error.code = "FORBIDDEN";
-      error.message = `Kan bestelling met bestellingsnr ${bestellingsnr} niet verwijderen, omdat er minstens 1 maaltijd in het verleden ligt.`;
-      error.details = { bestellingsnr };
-      throw error;
-    }
-  });
-
   //bijhorende maaltijden worden ook vewijderd door cascade in schema.prisma
   try {
     const deleted = await prisma.bestelling.delete({
       where: { bestellingsnr: bestellingsnr },
     });
-
     return deleted;
   } catch (error) {
     getLogger().error(`Error in deleteByBestellingsnr.`, error);
@@ -125,57 +108,41 @@ const deleteByBestellingsnr = async (bestellingsnr) => {
   }
 };
 
-
 const create = async (bestelling) => {
   try {
     const transformedMaaltijden = await Promise.all(
       bestelling.maaltijden.map(async (maaltijd) => {
-        //eerst controle of er al een maaltijd bestaat op dezelfde leverdatum voor dezelfde medewerker
-        const maaltijdMetZelfdeLeverdatum = await prisma.maaltijd.findFirst({
-          where: {
-            bestelling: {
-              medewerkerId: bestelling.medewerkerId,
-            },
-            leverdatum: maaltijd.leverdatum,
-          },
+        //suggestieVanDeMaand niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
+        //leverplaats omzetten naar leverplaatsId
+        const { suggestieVanDeMaand, leverplaats, ...rest } = maaltijd;
+        const leverplaatsRecord = await prisma.dienst.findUnique({
+          where: { naam: leverplaats },
         });
-        if (maaltijdMetZelfdeLeverdatum) {
-          throw new Error(
-            `Reeds maaltijd gekend op leverdatum ${maaltijd.leverdatum} voor medewerker met id ${bestelling.medewerkerId}.`
-          );
-        } else {
-          //suggestieVanDeMaand niet opnemen in maaltijd tabel, enkel suggestieVanDeMaandId
-          //leverplaats omzetten naar leverplaatsId
-          const { suggestieVanDeMaand, leverplaats, ...rest } = maaltijd;
-          const leverplaatsRecord = await prisma.dienst.findUnique({
-            where: { naam: leverplaats },
-          });
-          if (leverplaatsRecord === null) {
-            const error = new Error();
-            error.status = 404;
-            error.code = "NOT_FOUND";
-            error.message = `Leverplaats ${leverplaats} is niet gekend.`;
-            error.details = { leverplaats };
-            throw error;
-          }
-          const { id: leverplaatsId } = leverplaatsRecord;
-          return {
-            ...rest,
-            leverplaatsId: leverplaatsId,
-            soep:
-              maaltijd.soep === undefined
-                ? null
-                : maaltijd.soep === "dagsoep"
-                ? true
-                : false,
-            vetstof:
-              maaltijd.vetstof === undefined
-                ? null
-                : maaltijd.vetstof === "vetstof"
-                ? true
-                : false,
-          };
+        if (leverplaatsRecord === null) {
+          const error = new Error();
+          error.status = 404;
+          error.code = "NOT_FOUND";
+          error.message = `Leverplaats ${leverplaats} is niet gekend.`;
+          error.details = { leverplaats };
+          throw error;
         }
+        const { id: leverplaatsId } = leverplaatsRecord;
+        return {
+          ...rest,
+          leverplaatsId: leverplaatsId,
+          soep:
+            maaltijd.soep === undefined
+              ? null
+              : maaltijd.soep === "dagsoep"
+              ? true
+              : false,
+          vetstof:
+            maaltijd.vetstof === undefined
+              ? null
+              : maaltijd.vetstof === "vetstof"
+              ? true
+              : false,
+        };
       })
     );
 
