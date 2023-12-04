@@ -21,7 +21,8 @@ module.exports = async function createServer() {
 
   // installRest,shutdowndData aanroepen na de logger initialisatie!!!
   const installRest = require("./rest");
-  const { shutdownData } = require("./data/prisma");
+  const {shutdownData } = require("./data/prisma");
+
 
   const app = new Koa();
 

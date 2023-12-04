@@ -21,6 +21,4 @@ async function shutdownData() {
   logger.info("Successfully closed database connection");
 }
 
-module.exports = {prisma,shutdownData };
-
-
+module.exports = prisma, { shutdownData };
