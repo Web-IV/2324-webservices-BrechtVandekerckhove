@@ -125,7 +125,7 @@ const deleteByBestellingsnr = async (bestellingsnr) => {
   }
 };
 
-//error logging nog toevoegen
+
 const create = async (bestelling) => {
   try {
     const transformedMaaltijden = await Promise.all(

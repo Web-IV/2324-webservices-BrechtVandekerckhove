@@ -26,16 +26,16 @@ choco install mysql.workbench -y
 ## Opstarten
 
 - Maak een `.env`  bestand aan in de root met onderstaande code. 
-Pas username, password, localhost en poortnummer aan jouw lokale instellingen.
+Pas username, password, localhost en poortnummer aan aan jouw lokale instellingen.
 ```ini
 NODE_ENV=development  
 DATABASE_URL=mysql://username:password@localhost:3306/midnightmeals 
 ```
 - Installeer alle dependencies: `yarn`  
-- Creëer en seed de database: `yarn prisma migrate dev`  
+- Migreer en seed de database: `yarn prisma migrate dev`  
 - Start de development server: `yarn start`
 
-- Na het uitvoeren van de testen via `yarn test` is de database geledigd en dien je opnieuw te seeden: `yarn prisma db seed`. Hierna kun je weer starten met `yarn start`
+- Na het uitvoeren van de testen via `yarn test` is de database geledigd en dien je opnieuw te seeden via `yarn prisma db seed`. Hierna kun je weer starten met `yarn start`
 
 ## Testen
 

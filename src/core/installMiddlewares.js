@@ -2,12 +2,12 @@ const config = require("config");
 const bodyParser = require("koa-bodyparser");
 const koaCors = require("@koa/cors");
 const emoji = require("node-emoji");
-
+const koaHelmet = require("koa-helmet");
 const { getLogger } = require("./logging");
 const ServiceError = require("./serviceError");
 
 const NODE_ENV = config.get("env");
-const koaHelmet = require("koa-helmet");
+
 
 const CORS_ORIGINS = config.get("cors.origins");
 const CORS_MAX_AGE = config.get("cors.maxAge");

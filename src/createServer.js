@@ -19,9 +19,9 @@ module.exports = async function createServer() {
     },
   });
 
-  // installRest aanroepen na de logger initialisatie!!!
+  // installRest,shutdowndData aanroepen na de logger initialisatie!!!
   const installRest = require("./rest");
-  const prisma = require("./data/prisma");
+  const { shutdownData } = require("./data/prisma");
 
   const app = new Koa();
 
@@ -44,9 +44,7 @@ module.exports = async function createServer() {
     },
     async stop() {
       app.removeAllListeners();
-      getLogger().info("Closing database connection...");
-      await prisma.$disconnect();
-      getLogger().info("Successfully closed database connection");
+      shutdownData();
       getLogger().info("Goodbye! 👋");
     },
   };

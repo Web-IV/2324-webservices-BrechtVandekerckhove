@@ -15,12 +15,12 @@ try {
 }
 logger.info("Successfully initialized connection to the database");
 
-module.exports = prisma;
+async function shutdownData() {
+  logger.info("Closing database connection...");
+  await prisma.$disconnect();
+  logger.info("Successfully closed database connection");
+}
 
-/*
-You do not need to explicitly $disconnect() 
-CONCEPT
-in the context of a long-running application that is continuously 
-serving requests. Opening a new connection takes time and can slow down your
-application if you disconnect after each query.
-*/
+module.exports = {prisma,shutdownData };
+
+
