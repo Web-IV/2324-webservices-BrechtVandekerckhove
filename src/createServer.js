@@ -19,9 +19,9 @@ module.exports = async function createServer() {
     },
   });
 
-  // installRest,shutdowndData aanroepen na de logger initialisatie!!!
+  // installRest,shutdownData  aanroepen na de logger initialisatie!!!
   const installRest = require("./rest");
-  const {shutdownData } = require("./data/prisma");
+  const {shutdownData} = require("./data/prisma");
 
 
   const app = new Koa();
@@ -45,7 +45,7 @@ module.exports = async function createServer() {
     },
     async stop() {
       app.removeAllListeners();
-      shutdownData();
+      await shutdownData();
       getLogger().info("Goodbye! 👋");
     },
   };
