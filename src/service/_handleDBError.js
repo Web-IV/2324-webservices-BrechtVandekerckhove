@@ -26,7 +26,7 @@ const handleDBError = (error) => {
     if (code === "P2003") {
       switch (true) {
         case message.includes("medewerkerId"):
-          return ServiceError.notFound("This user bestaat niet", meta);
+          return ServiceError.notFound("Deze user bestaat niet", meta);
         case message.includes("suggestieVanDeMaandId"):
           return ServiceError.notFound(
             "SuggestieVanDeMaandId bestaat niet",
@@ -65,7 +65,7 @@ const handleDBError = (error) => {
     //mogelijke afhandeling voor andere prisma errors kunnen hier worden toegevoegd
     return error;
   } 
-   // Return error because we don't know what happened (not a PrismaClientKnownRequestError)
+   // Return error because we don't know what happened 
   else {
     return error;
   }
