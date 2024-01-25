@@ -90,7 +90,7 @@ const testdataBestellingen = [
 ];
 
 const dataToDelete = {
-  bestellingen: [100, 101,102],
+  bestellingen: [100, 101, 102],
   diensten: [100, 101],
   suggestieVanDeMaand: [100, 101],
 };
@@ -498,7 +498,7 @@ describe("Bestellingen", () => {
               hoofdschotel: "vegetarische suggestie",
               soep: "dagsoep",
               dessert: "fruit",
-              leverdatum: "2023-12-05T23:13:34.996Z",
+              leverdatum: "2024-12-05T23:13:34.996Z",
               leverplaats: "DIENST 2",
               suggestieVanDeMaandId: 101,
               suggestieVanDeMaand: "test vegie suggestie omschrijving december",
@@ -527,7 +527,7 @@ describe("Bestellingen", () => {
           {
             id: expect.anything(),
             type: "warmeMaaltijd",
-            leverdatum: "2023-12-05T23:13:34.996Z",
+            leverdatum: "2024-12-05T23:13:34.996Z",
             hoofdschotel: "vegetarische suggestie",
             soep: true,
             dessert: "fruit",
@@ -584,7 +584,8 @@ describe("Bestellingen", () => {
           maaltijden: true,
         },
         data: { ...testdataBestellingen[1], medewerkerId: testAdminId },
-      });  await prisma.bestelling.create({
+      });
+      await prisma.bestelling.create({
         include: {
           maaltijden: true,
         },
@@ -612,7 +613,6 @@ describe("Bestellingen", () => {
         .set("Authorization", authHeader);
       expect(response.statusCode).toBe(204);
       expect(response.body).toEqual({});
-   
     });
 
     it("should 403 and return message (bestelling met maaltijd in verleden", async () => {
@@ -620,11 +620,11 @@ describe("Bestellingen", () => {
       const response = await request
         .delete(`${url}/101`)
         .set("Authorization", authHeader);
-        expect(response.statusCode).toBe(403);
-        expect(response.body.code).toBe("FORBIDDEN");
-        expect(response.body.message).toBe(
-          "Kan bestelling met bestellingsnr 101 niet verwijderen, omdat er minstens 1 maaltijd in het verleden ligt."
-        );
+      expect(response.statusCode).toBe(403);
+      expect(response.body.code).toBe("FORBIDDEN");
+      expect(response.body.message).toBe(
+        "Kan bestelling met bestellingsnr 101 niet verwijderen, omdat er minstens 1 maaltijd in het verleden ligt."
+      );
     });
     it("should 403 and return message (unauthorized request)", async () => {
       authHeader = await login(request);
